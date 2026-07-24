@@ -275,17 +275,17 @@ for row in MATCHTABLE:
     del row["package"]
 
 LAKE_META = [
-    {"lakeid": "AL", "lake": "Allequash", "region": "north", "lat": 46.038317, "long": -89.620617},
-    {"lakeid": "BM", "lake": "Big Musky", "region": "north", "lat": 46.021067, "long": -89.611783},
+    {"lakeid": "AL", "lake": "Allequash Lake", "region": "north", "lat": 46.038317, "long": -89.620617},
+    {"lakeid": "BM", "lake": "Big Musky Lake", "region": "north", "lat": 46.021067, "long": -89.611783},
     {"lakeid": "CB", "lake": "Crystal Bog", "region": "north", "lat": 46.007583, "long": -89.606183},
-    {"lakeid": "CR", "lake": "Crystal", "region": "north", "lat": 46.00275, "long": -89.612233},
-    {"lakeid": "SP", "lake": "Sparkling", "region": "north", "lat": 46.007733, "long": -89.701183},
+    {"lakeid": "CR", "lake": "Crystal Lake", "region": "north", "lat": 46.00275, "long": -89.612233},
+    {"lakeid": "SP", "lake": "Sparkling Lake", "region": "north", "lat": 46.007733, "long": -89.701183},
     {"lakeid": "TB", "lake": "Trout Bog", "region": "north", "lat": 46.04125, "long": -89.686283},
-    {"lakeid": "TR", "lake": "Trout", "region": "north", "lat": 46.029267, "long": -89.665017},
-    {"lakeid": "ME", "lake": "Mendota", "region": "south", "lat": 43.09885, "long": -89.40545},
-    {"lakeid": "MO", "lake": "Monona", "region": "south", "lat": 43.06337, "long": -89.36086},
-    {"lakeid": "WI", "lake": "Wingra", "region": "south", "lat": 43.05258, "long": -89.42499},
-    {"lakeid": "FI", "lake": "Fish", "region": "south", "lat": 43.28733, "long": -89.65173},
+    {"lakeid": "TR", "lake": "Trout Lake", "region": "north", "lat": 46.029267, "long": -89.665017},
+    {"lakeid": "ME", "lake": "Lake Mendota", "region": "south", "lat": 43.09885, "long": -89.40545},
+    {"lakeid": "MO", "lake": "Lake Monona", "region": "south", "lat": 43.06337, "long": -89.36086},
+    {"lakeid": "WI", "lake": "Lake Wingra", "region": "south", "lat": 43.05258, "long": -89.42499},
+    {"lakeid": "FI", "lake": "Fish Lake", "region": "south", "lat": 43.28733, "long": -89.65173},
 ]
 LAKEID_TO_NAME = {row["lakeid"]: row["lake"] for row in LAKE_META}
 
