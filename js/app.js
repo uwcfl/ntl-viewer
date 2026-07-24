@@ -184,13 +184,14 @@ async function fetchJSON(url) {
 }
 
 async function onVarChange() {
-  updateCitation();
   await onSelectionChange();
 }
 
 async function onSelectionChange() {
   const varCode = elVarSelect.value;
   if (!varCode) return;
+
+  updateCitation();
 
   // Only re-fetch if variable changed
   if (varCode !== state.currentVar) {

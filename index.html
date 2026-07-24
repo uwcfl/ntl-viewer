@@ -16,6 +16,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.32.0/plotly.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <link rel="icon" type="image/png" href="assets/NTL_logo_bw_notext-2048x2048.png">
 </head>
 
 <body>
@@ -70,7 +71,7 @@
       <div class="field">
         <label>Options</label>
         <div class="checkbox-group">
-          <label class="checkbox-option"><input type="checkbox" id="freeYAxis"> Free y-axis</label>
+          <!-- <label class="checkbox-option"><input type="checkbox" id="freeYAxis"> Free y-axis</label> -->
           <label class="checkbox-option"><input type="checkbox" id="logYAxis"> Log y-axis</label>
         </div>
       </div>
@@ -104,7 +105,8 @@
         <button id="closeMapBtn" class="btn-icon" type="button" aria-label="Close map">&#10005;</button>
       </div>
       <p class="modal-hint">Currently selected site<span id="modalHintPlural"> is</span> highlighted in
-        <strong>coral</strong>.</p>
+        <strong>coral</strong>.
+      </p>
       <div id="leafletMap" class="leaflet-map"></div>
     </div>
   </div>
