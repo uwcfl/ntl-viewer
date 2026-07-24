@@ -411,11 +411,11 @@ function buildLayout(yTitle, logY, xType = "date") {
       // autorange: freeY ? true : undefined,
     },
     hovermode: "closest",
-    hoverlabel: {
-      bgcolor: "#0d2b3e",
-      bordercolor: "#2a7da8",
-      font: { color: "#ffffff", size: 12 },
-    },
+    // hoverlabel: {
+    //   // bgcolor: "#0d2b3e",
+    //   bordercolor: "#2a7da8",
+    //   font: { color: "#ffffff", size: 12 },
+    // },
   };
 }
 
