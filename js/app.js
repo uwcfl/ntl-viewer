@@ -18,10 +18,10 @@
 // Constants
 // ---------------------------------------------------------------------------
 
-const NORTH_LAKES = ["Allequash", "Big Musky", "Crystal", "Crystal Bog", "Sparkling", "Trout", "Trout Bog"];
-const SOUTH_LAKES = ["Mendota", "Monona", "Fish", "Wingra"];
+const NORTH_LAKES = ["Allequash Lake", "Big Musky Lake", "Crystal Lake", "Crystal Bog", "Sparkling Lake", "Trout Lake", "Trout Bog"];
+const SOUTH_LAKES = ["Lake Mendota", "Lake Monona", "Fish Lake", "Lake Wingra"];
 
-const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_ABBR = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 // Plotly colour sequence (one per lake trace)
 const TRACE_COLORS = [
