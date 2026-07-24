@@ -1,0 +1,157 @@
+[
+  {
+    "var": "wtemp",
+    "name": "Water Temperature (\u00b0C)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=29"
+  },
+  {
+    "var": "o2",
+    "name": "Dissolved Oxygen (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=29"
+  },
+  {
+    "var": "o2sat",
+    "name": "Dissolved Oxygen (% sat)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=29"
+  },
+  {
+    "var": "doc",
+    "name": "Dissolved Organic Carbon (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "dic",
+    "name": "Dissolved Inorganic Carbon (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "toc",
+    "name": "Total Organic Carbon (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "tic",
+    "name": "Total Inorganic Carbon (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "no3no2",
+    "name": "Nitrate + Nitrite as N (\u00b5g/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "nh4",
+    "name": "Ammonium as N (\u00b5g/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "totnuf",
+    "name": "Total Nitrogen unfiltered (\u00b5g/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "totnf",
+    "name": "Total Nitrogen filtered (\u00b5g/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "drp",
+    "name": "Dissolved Reactive Phosphorus (\u00b5g/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "totpuf",
+    "name": "Total Phosphorus unfiltered (\u00b5g/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "totpf",
+    "name": "Total Phosphorus filtered (\u00b5g/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "drsif",
+    "name": "Dissolved Reactive Silica (\u00b5g/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "ph",
+    "name": "pH",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "alk",
+    "name": "Alkalinity (ueq/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "ca",
+    "name": "Calcium (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "mg",
+    "name": "Magnesium (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "na",
+    "name": "Sodium (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "k",
+    "name": "Potassium (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "so4",
+    "name": "Sulfate (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "cl",
+    "name": "Chloride (mg/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "cond",
+    "name": "Specific Conductance (\u00b5S/cm)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "secview",
+    "name": "Secchi with viewer",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=31"
+  },
+  {
+    "var": "secnview",
+    "name": "Secchi without viewer",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=31"
+  },
+  {
+    "var": "iceduration",
+    "name": "Lake ice duration (days)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=32"
+  },
+  {
+    "var": "cladocera",
+    "name": "Cladocera (#/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "calanoid",
+    "name": "Calanoid copepod (#/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "cyclopoid",
+    "name": "Cyclopoid copepod (#/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "rotifer",
+    "name": "Rotifer (#/L)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  }
+]
