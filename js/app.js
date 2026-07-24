@@ -293,34 +293,35 @@ function renderPlot() {
       );
       if (!rows.length) return;
 
-      // Group by month
-      const byMonth = Array.from({ length: 12 }, () => []);
+      const xVals = [];
+      const yVals = [];
       rows.forEach(r => {
         const m = new Date(r.sampledate).getMonth(); // 0-indexed
-        if (m >= 0 && m < 12) byMonth[m].push(r.value);
+        if (m >= 0 && m < 12) {
+          xVals.push(MONTH_ABBR[m]);
+          yVals.push(r.value);
+        }
       });
 
-      // One box trace per month – Plotly groups them by x position
-      MONTH_ABBR.forEach((mon, mi) => {
-        const vals = byMonth[mi];
-        if (!vals.length) return;
-        traces.push({
-          type: "box",
-          name: lakes.length > 1 ? `${lake} – ${mon}` : mon,
-          x: vals.map(() => mon),
-          y: vals,
-          marker: { color: TRACE_COLORS[i % TRACE_COLORS.length] },
-          line: { color: TRACE_COLORS[i % TRACE_COLORS.length] },
-          legendgroup: lake,
-          showlegend: mi === 0,
-          boxpoints: false,
-        });
+      if (!xVals.length) return;
+
+      traces.push({
+        type: "box",
+        name: lake,
+        x: xVals,
+        y: yVals,
+        marker: { color: TRACE_COLORS[i % TRACE_COLORS.length] },
+        line: { color: TRACE_COLORS[i % TRACE_COLORS.length] },
+        boxpoints: false,
       });
     });
 
     const layout = buildLayout(varName, logY, "category");
+    layout.xaxis.categoryorder = "array";
     layout.xaxis.categoryarray = MONTH_ABBR;
     layout.boxmode = "group";
+    layout.boxgap = 0.2;
+    layout.boxgroupgap = 0.1;
     drawPlotly(traces, layout);
 
   } else if (plotType === "plot.am") {
