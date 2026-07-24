@@ -10,17 +10,6 @@ by the static site:
   data/all_lter.json      - long-format observations
   data/matchtable.json    - variable code -> display name -> citation URL
   data/lakelocations.json - lake metadata + coordinates
-
-NOTE: This script talks to pasta.lternet.edu, which is only reachable from
-a normal internet-connected environment (e.g. GitHub Actions) -- it cannot
-be executed inside this sandboxed dev environment, so it has not been run
-end-to-end against live data. The transformation logic mirrors server.R as
-closely as possible, but since the exact column layouts of each EDI package
-could not be inspected here, the flag/value pairing is done generically
-(any column named `flag<x>` is treated as the QC flag for a column named
-`<x>`) rather than by hardcoded column ranges. Run once manually
-(`python scripts/fetch_data.py`) and check data/all_lter.json before
-turning on the schedule, and see the README for troubleshooting notes.
 """
 
 import io
@@ -187,12 +176,13 @@ def build_ions() -> pd.DataFrame:
     out = melt_value_flag_columns(raw, ID_CANDIDATES, exclude_bad_flags=True)
     return out
 
-
 def build_ice() -> pd.DataFrame:
     print("Loading ice duration - packages 32 (north) + 33 (south) ...")
     north = load_latest_package("32")[["lakeid", "year", "duration"]]
     south = load_latest_package("33")[["lakeid", "year", "duration"]]
-    ice = pd.concat([north, south], ignore_index=True)
+    south_nona = south.dropna(subset=['year']).copy()
+    south_nona['year'] = south_nona['year'].astype(int)
+    ice = pd.concat([north, south_nona], ignore_index=True)
     ice = ice.rename(columns={"year": "year4", "duration": "value"})
     ice["item"] = "iceduration"
     ice["sampledate"] = pd.to_datetime(ice["year4"].astype(str) + "-01-01")
