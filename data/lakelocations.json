@@ -1,14 +1,14 @@
 [
   {
     "lakeid": "AL",
-    "lake": "Allequash",
+    "lake": "Allequash Lake",
     "region": "north",
     "lat": 46.038317,
     "long": -89.620617
   },
   {
     "lakeid": "BM",
-    "lake": "Big Musky",
+    "lake": "Big Musky Lake",
     "region": "north",
     "lat": 46.021067,
     "long": -89.611783
@@ -22,14 +22,14 @@
   },
   {
     "lakeid": "CR",
-    "lake": "Crystal",
+    "lake": "Crystal Lake",
     "region": "north",
     "lat": 46.00275,
     "long": -89.612233
   },
   {
     "lakeid": "SP",
-    "lake": "Sparkling",
+    "lake": "Sparkling Lake",
     "region": "north",
     "lat": 46.007733,
     "long": -89.701183
@@ -43,35 +43,35 @@
   },
   {
     "lakeid": "TR",
-    "lake": "Trout",
+    "lake": "Trout Lake",
     "region": "north",
     "lat": 46.029267,
     "long": -89.665017
   },
   {
     "lakeid": "ME",
-    "lake": "Mendota",
+    "lake": "Lake Mendota",
     "region": "south",
     "lat": 43.09885,
     "long": -89.40545
   },
   {
     "lakeid": "MO",
-    "lake": "Monona",
+    "lake": "Lake Monona",
     "region": "south",
     "lat": 43.06337,
     "long": -89.36086
   },
   {
     "lakeid": "WI",
-    "lake": "Wingra",
+    "lake": "Lake Wingra",
     "region": "south",
     "lat": 43.05258,
     "long": -89.42499
   },
   {
     "lakeid": "FI",
-    "lake": "Fish",
+    "lake": "Fish Lake",
     "region": "south",
     "lat": 43.28733,
     "long": -89.65173
