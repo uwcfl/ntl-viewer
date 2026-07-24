@@ -419,8 +419,8 @@ select:hover { border-color: var(--clr-foam); }
 .modal-hint strong { color: var(--clr-coral); }
 
 .leaflet-map {
-  flex: 1;
   height: 460px;
+  min-height: 460px; /* explicit height — flex-basis:0 from flex:1 would collapse this to 0 */
   width: 100%;
 }
 

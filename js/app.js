@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     populateLakeSelect(lakeLocations);
     populateVarSelect(matchtable);
-    initMap(lakeLocations);
+    // initMap(lakeLocations);
     updateLastUpdated(lastUpdated.updated);
     attachListeners();
 
@@ -457,7 +457,7 @@ function initMap(lakeLocations) {
   lakeLocations.forEach(loc => {
     const marker = L.circleMarker([loc.lat, loc.long], circleStyle(false))
       .addTo(state.map)
-      .bindPopup(`<strong>${loc.lake}</strong><br>${loc.region === "north" ? "Northern" : "Southern"} lakes`);
+      .bindTooltip(`<strong>${loc.lake}</strong>`);
     state.markers[loc.lake] = marker;
   });
 }
@@ -489,9 +489,18 @@ function updateMapMarkers() {
 
 function openMap() {
   elMapModal.hidden = false;
-  updateMapMarkers();
-  // Leaflet needs a size invalidation when the container becomes visible
-  setTimeout(() => state.map && state.map.invalidateSize(), 50);
+  if (!state.map) {
+    // Defer past the browser's layout/paint so #leafletMap has real dimensions
+    // before Leaflet reads the container size and starts requesting tiles.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      initMap(state.lakeLocations);
+      updateMapMarkers();
+      state.map.invalidateSize();
+    }));
+  } else {
+    updateMapMarkers();
+    setTimeout(() => state.map.invalidateSize(), 100);
+  }
 }
 
 function closeMap() {
