@@ -30,7 +30,7 @@ const TRACE_COLORS = [
 ];
 
 // Leaflet marker colours
-const MARKER_DEFAULT  = "#2a7da8";
+const MARKER_DEFAULT = "#2a7da8";
 const MARKER_SELECTED = "#e8604c";
 
 // ---------------------------------------------------------------------------
@@ -52,30 +52,32 @@ const state = {
 // ---------------------------------------------------------------------------
 
 let elLakeSelect, elVarSelect, elDepthSelect, elPlotTypeGroup,
-    elFreeYAxis, elLogYAxis, elShowMapBtn, elCloseMapBtn,
-    elMapModal, elLeafletMap, elChart, elChartLoading,
-    elCitationLine, elLastUpdated, elModalHintPlural;
+  elLogYAxis, elShowMapBtn, elCloseMapBtn,
+  elMapModal, elLeafletMap, elChart, elChartLoading,
+  elCitationLine, elLastUpdated, elModalHintPlural;
+
+// elFreeYAxis,
 
 // ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", async () => {
-  elLakeSelect       = document.getElementById("lakeSelect");
-  elVarSelect        = document.getElementById("varSelect");
-  elDepthSelect      = document.getElementById("depthSelect");
-  elPlotTypeGroup    = document.getElementById("plotTypeGroup");
-  elFreeYAxis        = document.getElementById("freeYAxis");
-  elLogYAxis         = document.getElementById("logYAxis");
-  elShowMapBtn       = document.getElementById("showMapBtn");
-  elCloseMapBtn      = document.getElementById("closeMapBtn");
-  elMapModal         = document.getElementById("mapModal");
-  elLeafletMap       = document.getElementById("leafletMap");
-  elChart            = document.getElementById("chart");
-  elChartLoading     = document.getElementById("chartLoading");
-  elCitationLine     = document.getElementById("citationLine");
-  elLastUpdated      = document.getElementById("lastUpdated");
-  elModalHintPlural  = document.getElementById("modalHintPlural");
+  elLakeSelect = document.getElementById("lakeSelect");
+  elVarSelect = document.getElementById("varSelect");
+  elDepthSelect = document.getElementById("depthSelect");
+  elPlotTypeGroup = document.getElementById("plotTypeGroup");
+  // elFreeYAxis        = document.getElementById("freeYAxis");
+  elLogYAxis = document.getElementById("logYAxis");
+  elShowMapBtn = document.getElementById("showMapBtn");
+  elCloseMapBtn = document.getElementById("closeMapBtn");
+  elMapModal = document.getElementById("mapModal");
+  elLeafletMap = document.getElementById("leafletMap");
+  elChart = document.getElementById("chart");
+  elChartLoading = document.getElementById("chartLoading");
+  elCitationLine = document.getElementById("citationLine");
+  elLastUpdated = document.getElementById("lastUpdated");
+  elModalHintPlural = document.getElementById("modalHintPlural");
 
   showLoading(true);
 
@@ -86,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       fetchJSON("data/last_updated.json"),
     ]);
 
-    state.matchtable    = matchtable;
+    state.matchtable = matchtable;
     state.lakeLocations = lakeLocations;
 
     populateLakeSelect(lakeLocations);
@@ -121,17 +123,17 @@ function populateLakeSelect(lakeLocations) {
     opt.value = loc.lake;
     opt.textContent = loc.lake;
     if (loc.region === "north") northGroup.appendChild(opt);
-    else                         southGroup.appendChild(opt);
+    else southGroup.appendChild(opt);
   });
 }
 
 function populateVarSelect(matchtable) {
   // Group by category inferred from the original R app ordering
   const groups = {
-    Physical:    ["wtemp", "o2", "o2sat", "iceduration"],
-    Nutrients:   ["doc", "dic", "toc", "tic", "no3no2", "nh4", "totnuf", "totnf", "drp", "totpuf", "totpf", "drsif"],
-    Ions:        ["ph", "alk", "ca", "mg", "na", "k", "so4", "cl", "cond"],
-    Secchi:      ["secview", "secnview"],
+    Physical: ["wtemp", "o2", "o2sat", "iceduration"],
+    Nutrients: ["doc", "dic", "toc", "tic", "no3no2", "nh4", "totnuf", "totnf", "drp", "totpuf", "totpf", "drsif"],
+    Ions: ["ph", "alk", "ca", "mg", "na", "k", "so4", "cl", "cond"],
+    Secchi: ["secview", "secnview"],
     Zooplankton: ["cladocera", "calanoid", "cyclopoid", "rotifer"],
   };
 
@@ -159,7 +161,7 @@ function attachListeners() {
   elLakeSelect.addEventListener("change", onSelectionChange);
   elVarSelect.addEventListener("change", onVarChange);
   elDepthSelect.addEventListener("change", renderPlot);
-  elFreeYAxis.addEventListener("change", renderPlot);
+  // elFreeYAxis.addEventListener("change", renderPlot);
   elLogYAxis.addEventListener("change", renderPlot);
   elPlotTypeGroup.addEventListener("change", renderPlot);
 
@@ -197,7 +199,7 @@ async function onSelectionChange() {
   if (varCode !== state.currentVar) {
     showLoading(true);
     try {
-      state.varData    = await fetchJSON(`data/vars/${varCode}.json`);
+      state.varData = await fetchJSON(`data/vars/${varCode}.json`);
       state.currentVar = varCode;
     } catch (err) {
       showLoading(false);
@@ -271,13 +273,13 @@ function getPlotType() {
 function renderPlot() {
   if (!state.varData) return;
 
-  const lakes       = getSelectedLakes();
-  const depthRaw    = elDepthSelect.value;
-  const depth       = depthRaw !== "" ? parseFloat(depthRaw) : 0;
-  const plotType    = getPlotType();
-  const freeY       = elFreeYAxis.checked;
-  const logY        = elLogYAxis.checked;
-  const varName     = state.matchtable.find(r => r.var === state.currentVar)?.name ?? state.currentVar;
+  const lakes = getSelectedLakes();
+  const depthRaw = elDepthSelect.value;
+  const depth = depthRaw !== "" ? parseFloat(depthRaw) : 0;
+  const plotType = getPlotType();
+  // const freeY       = elFreeYAxis.checked;
+  const logY = elLogYAxis.checked;
+  const varName = state.matchtable.find(r => r.var === state.currentVar)?.name ?? state.currentVar;
 
   showLoading(false);
 
@@ -308,7 +310,7 @@ function renderPlot() {
           x: vals.map(() => mon),
           y: vals,
           marker: { color: TRACE_COLORS[i % TRACE_COLORS.length] },
-          line:   { color: TRACE_COLORS[i % TRACE_COLORS.length] },
+          line: { color: TRACE_COLORS[i % TRACE_COLORS.length] },
           legendgroup: lake,
           showlegend: mi === 0,
           boxpoints: false,
@@ -316,7 +318,7 @@ function renderPlot() {
       });
     });
 
-    const layout = buildLayout(varName, logY, freeY, "category");
+    const layout = buildLayout(varName, logY, "category");
     layout.xaxis.categoryarray = MONTH_ABBR;
     layout.boxmode = "group";
     drawPlotly(traces, layout);
@@ -342,17 +344,17 @@ function renderPlot() {
       });
 
       traces.push({
-        type:  "scatter",
-        mode:  "lines+markers",
-        name:  lake,
-        x:     years,
-        y:     means,
-        line:  { color: TRACE_COLORS[i % TRACE_COLORS.length], width: 2 },
+        type: "scatter",
+        mode: "lines+markers",
+        name: lake,
+        x: years,
+        y: means,
+        line: { color: TRACE_COLORS[i % TRACE_COLORS.length], width: 2 },
         marker: { color: TRACE_COLORS[i % TRACE_COLORS.length], size: 5 },
       });
     });
 
-    const layout = buildLayout(varName, logY, freeY);
+    const layout = buildLayout(varName, logY);
     layout.xaxis.title = "Year";
     drawPlotly(traces, layout);
 
@@ -365,25 +367,25 @@ function renderPlot() {
       if (!rows.length) return;
 
       traces.push({
-        type:  "scatter",
-        mode:  "lines+markers",
-        name:  lake,
-        x:     rows.map(r => r.sampledate),
-        y:     rows.map(r => r.value),
-        line:  { color: TRACE_COLORS[i % TRACE_COLORS.length], width: 1.5 },
+        type: "scatter",
+        mode: "lines+markers",
+        name: lake,
+        x: rows.map(r => r.sampledate),
+        y: rows.map(r => r.value),
+        line: { color: TRACE_COLORS[i % TRACE_COLORS.length], width: 1.5 },
         marker: { color: TRACE_COLORS[i % TRACE_COLORS.length], size: 3 },
       });
     });
 
-    const layout = buildLayout(varName, logY, freeY);
+    const layout = buildLayout(varName, logY);
     drawPlotly(traces, layout);
   }
 }
 
-function buildLayout(yTitle, logY, freeY, xType = "date") {
+function buildLayout(yTitle, logY, xType = "date") {
   return {
     paper_bgcolor: "rgba(0,0,0,0)",
-    plot_bgcolor:  "#fafcff",
+    plot_bgcolor: "#fafcff",
     margin: { t: 20, r: 20, b: 60, l: 70 },
     font: { family: "'Inter', sans-serif", size: 13, color: "#1a2936" },
     legend: {
@@ -401,11 +403,11 @@ function buildLayout(yTitle, logY, freeY, xType = "date") {
     },
     yaxis: {
       title: { text: yTitle, font: { size: 12 } },
-      type:  logY ? "log" : "linear",
+      type: logY ? "log" : "linear",
       gridcolor: "#e0eaf2",
       linecolor: "#cdd8e2",
       tickfont: { size: 11 },
-      autorange: freeY ? true : undefined,
+      // autorange: freeY ? true : undefined,
     },
     hovermode: "closest",
     hoverlabel: {
@@ -462,11 +464,11 @@ function initMap(lakeLocations) {
 
 function circleStyle(selected) {
   return {
-    radius:      selected ? 11 : 8,
-    fillColor:   selected ? MARKER_SELECTED : MARKER_DEFAULT,
-    color:       selected ? "#a33828" : "#1a5a7a",
-    weight:      selected ? 2.5 : 1.5,
-    opacity:     1,
+    radius: selected ? 11 : 8,
+    fillColor: selected ? MARKER_SELECTED : MARKER_DEFAULT,
+    color: selected ? "#a33828" : "#1a5a7a",
+    weight: selected ? 2.5 : 1.5,
+    opacity: 1,
     fillOpacity: selected ? 0.9 : 0.65,
   };
 }
