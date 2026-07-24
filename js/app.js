@@ -228,13 +228,13 @@ function updateDepthSelect() {
   if (!state.varData) return;
   const lakes = getSelectedLakes();
 
-  // For each lake, collect depths with >50 observations; then intersect.
+  // For each lake, collect depths with >10 observations; then intersect.
   const depthSets = lakes.map(lake => {
     const counts = {};
     state.varData
       .filter(r => r.lakename === lake)
       .forEach(r => { counts[r.depth] = (counts[r.depth] || 0) + 1; });
-    return new Set(Object.entries(counts).filter(([, n]) => n > 50).map(([d]) => d));
+    return new Set(Object.entries(counts).filter(([, n]) => n > 10).map(([d]) => d));
   });
 
   // Intersection across all selected lakes
@@ -356,7 +356,7 @@ function renderPlot() {
     });
 
     const layout = buildLayout(varName, logY);
-    layout.xaxis.title = "Year";
+    // layout.xaxis.title = "Year";
     drawPlotly(traces, layout);
 
   } else {
@@ -516,10 +516,15 @@ function updateCitation() {
   const varCode = elVarSelect.value;
   const row = state.matchtable.find(r => r.var === varCode);
   if (!row || !elCitationLine) return;
+  let cite_url = row.url;
+
+  // Ice dataset is split in two, assign correct URL for southern lakes
+  if (elVarSelect.value == "iceduration" && [...SOUTH_LAKES, "__all_south__"].includes(elLakeSelect.value))
+    cite_url = "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=33";
 
   elCitationLine.innerHTML =
     `A friendly reminder to please cite data! Data citation for this dataset can be found here: ` +
-    `<a href="${row.url}" target="_blank" rel="noopener">EDI Dataset Page</a>`;
+    `<a href="${cite_url}" target="_blank" rel="noopener">EDI Dataset Page</a>`;
 }
 
 // ---------------------------------------------------------------------------
