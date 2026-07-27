@@ -241,6 +241,58 @@ def build_zoops() -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
+# Crayfish / fish catch data (mirrors loadLTERcrayfish / loadLTERfishabundance
+# in server.R). These datasets carry species (spname) and gear (gearid)
+# dimensions that the physical/chemical data above does not, so they are
+# built and written out separately rather than folded into `all_lter`.
+# ---------------------------------------------------------------------------
+
+# str_c(gearid) recode used for both crayfish and fish in server.R
+GEAR_NAMES = {
+    "BSEINE": "Beach Seine (ended 2019)",
+    "CRAYTR": "Crayfish Trap",
+    "ELFISH": "Electrofishing",
+    "FYKNET": "Fyke Net",
+    "TRAMML": "Trammel Net",
+    "VGN": "Vertical Gill Net",
+}
+
+
+def build_crayfish() -> pd.DataFrame:
+    # North Temperate Lakes LTER: Crayfish Abundance 1981 - current (package 3)
+    print("Loading crayfish abundance - package 3 ...")
+    raw = load_latest_package("3")
+    out = raw[raw["total_caught"].notna() & raw["spname"].notna()].copy()
+    out["CPUE"] = out["total_caught"] / out["effort"]
+    out["item"] = "rusty"
+    out = out[out["spname"] != "CRAYFISH"]
+    # server.R keeps only crayfish-trap catches
+    out = out[out["gearid"] == "CRAYTR"]
+    out["gearid"] = out["gearid"].map(GEAR_NAMES).fillna(out["gearid"])
+    return out
+
+
+def build_fish() -> pd.DataFrame:
+    # North Temperate Lakes LTER: Fish Abundance 1981 - current (package 7)
+    print("Loading fish abundance - package 7 ...")
+    raw = load_latest_package("7")
+    out = raw[raw["total_caught"].notna() & raw["spname"].notna()].copy()
+    out["CPUE"] = out["total_caught"] / out["effort"]
+    out["item"] = "fish"
+    out = out[out["spname"] != "UNIDENTIFIED"]
+    out = out[~out["gearid"].isin(["ESHOCK", "MINNOW"])]
+    # server.R collapses all VGN-prefixed gear codes (e.g. VGN1, VGN2) to "VGN"
+    out["gearid"] = out["gearid"].where(~out["gearid"].str.contains("VGN"), "VGN")
+    out["gearid"] = out["gearid"].map(GEAR_NAMES).fillna(out["gearid"])
+    # server.R: group_by(spname) |> filter(n() > 25) - keep only species with
+    # more than 25 catch records in the *whole* dataset. Reproduced here as a
+    # global filter (see note to user about this choice).
+    counts = out.groupby("spname")["spname"].transform("count")
+    out = out[counts > 25]
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Static reference tables (mirror `matchtable` and `lakelocations` in server.R)
 # ---------------------------------------------------------------------------
 
@@ -281,6 +333,21 @@ for row in MATCHTABLE:
     row["url"] = f"https://portal.edirepository.org/nis/mapbrowse?scope={SCOPE}&identifier={row['package']}"
     del row["package"]
 
+MATCHTABLE.append(
+    {
+        "var": "rusty",
+        "name": "Rusty Crayfish CPUE (per trap)",
+        "url": f"https://portal.edirepository.org/nis/mapbrowse?scope={SCOPE}&identifier=3",
+    }
+)
+MATCHTABLE.append(
+    {
+        "var": "fish",
+        "name": "Fish CPUE (per unit effort)",
+        "url": f"https://portal.edirepository.org/nis/mapbrowse?scope={SCOPE}&identifier=7",
+    }
+)
+
 LAKE_META = [
     {"lakeid": "AL", "lake": "Allequash Lake", "region": "north", "lat": 46.038317, "long": -89.620617},
     {"lakeid": "BM", "lake": "Big Musky Lake", "region": "north", "lat": 46.021067, "long": -89.611783},
@@ -305,6 +372,12 @@ LAKEID_TO_NAME = {row["lakeid"]: row["lake"] for row in LAKE_META}
 def main():
     import os
 
+    os.makedirs("data/vars", exist_ok=True)
+    written_vars = []
+
+    # -----------------------------------------------------------------
+    # Physical / chemical / biological long-format data -> all_lter
+    # -----------------------------------------------------------------
     frames = []
     for label, builder in [
         ("temp", build_temp),
@@ -319,28 +392,78 @@ def main():
         except Exception as exc:  # noqa: BLE001
             print(f"  !! failed to load {label}: {exc}", file=sys.stderr)
 
-    if not frames:
+    if frames:
+        all_lter = pd.concat(frames, ignore_index=True)
+        all_lter["lakename"] = all_lter["lakeid"].map(LAKEID_TO_NAME)
+        all_lter = all_lter[all_lter["lakename"].notna()]
+        all_lter["sampledate"] = pd.to_datetime(all_lter["sampledate"]).dt.strftime("%Y-%m-%d")
+
+        keep_cols = [c for c in ["lakeid", "lakename", "year4", "daynum", "sampledate", "depth", "rep", "item", "value"] if c in all_lter.columns]
+        all_lter = all_lter[keep_cols]
+
+        print(f"Combined physical/chemical dataset: {all_lter.shape[0]:,} rows")
+
+        # Write one JSON file per variable so the browser only fetches what it needs.
+        for var in all_lter["item"].unique():
+            subset = all_lter[all_lter["item"] == var].drop(columns=["item"])
+            out_path = f"data/vars/{var}.json"
+            subset.to_json(out_path, orient="records")
+            print(f"  wrote {out_path} ({subset.shape[0]:,} rows)")
+            written_vars.append(var)
+    else:
+        print("  !! no physical/chemical datasets loaded", file=sys.stderr)
+
+    # -----------------------------------------------------------------
+    # Crayfish / fish catch data -> its own schema (spname, gearid, CPUE)
+    # -----------------------------------------------------------------
+    catch_frames = []
+    for label, builder in [
+        ("crayfish", build_crayfish),
+        ("fish", build_fish),
+    ]:
+        try:
+            catch_frames.append(builder())
+        except Exception as exc:  # noqa: BLE001
+            print(f"  !! failed to load {label}: {exc}", file=sys.stderr)
+
+    if catch_frames:
+        catch = pd.concat(catch_frames, ignore_index=True)
+        # mirrors `filter(year4 != 1981)` applied to allLTER in server.R
+        catch = catch[catch["year4"] != 1981]
+        catch["lakename"] = catch["lakeid"].map(LAKEID_TO_NAME)
+        catch = catch[catch["lakename"].notna()]
+
+        catch_keep_cols = [
+            c
+            for c in [
+                "lakeid",
+                "lakename",
+                "year4",
+                "spname",
+                "gearid",
+                "total_caught",
+                "effort",
+                "CPUE",
+                "item",
+            ]
+            if c in catch.columns
+        ]
+        catch = catch[catch_keep_cols]
+
+        print(f"Combined crayfish/fish dataset: {catch.shape[0]:,} rows")
+
+        for var in catch["item"].unique():
+            subset = catch[catch["item"] == var].drop(columns=["item"])
+            out_path = f"data/vars/{var}.json"
+            subset.to_json(out_path, orient="records")
+            print(f"  wrote {out_path} ({subset.shape[0]:,} rows)")
+            written_vars.append(var)
+    else:
+        print("  !! no crayfish/fish datasets loaded", file=sys.stderr)
+
+    if not written_vars:
         print("No datasets loaded successfully; aborting.", file=sys.stderr)
         sys.exit(1)
-
-    all_lter = pd.concat(frames, ignore_index=True)
-    all_lter["lakename"] = all_lter["lakeid"].map(LAKEID_TO_NAME)
-    all_lter = all_lter[all_lter["lakename"].notna()]
-    all_lter["sampledate"] = pd.to_datetime(all_lter["sampledate"]).dt.strftime("%Y-%m-%d")
-
-    keep_cols = [c for c in ["lakeid", "lakename", "year4", "daynum", "sampledate", "depth", "rep", "item", "value"] if c in all_lter.columns]
-    all_lter = all_lter[keep_cols]
-
-    print(f"Combined dataset: {all_lter.shape[0]:,} rows")
-
-    # Write one JSON file per variable so the browser only fetches what it needs.
-    os.makedirs("data/vars", exist_ok=True)
-    var_codes = all_lter["item"].unique()
-    for var in var_codes:
-        subset = all_lter[all_lter["item"] == var].drop(columns=["item"])
-        out_path = f"data/vars/{var}.json"
-        subset.to_json(out_path, orient="records")
-        print(f"  wrote {out_path} ({subset.shape[0]:,} rows)")
 
     with open("data/matchtable.json", "w") as f:
         json.dump(MATCHTABLE, f, indent=2)
@@ -349,7 +472,7 @@ def main():
     with open("data/last_updated.json", "w") as f:
         json.dump({"updated": date.today().isoformat()}, f)
 
-    print(f"Wrote {len(var_codes)} per-variable files to data/vars/, plus matchtable.json, lakelocations.json, last_updated.json")
+    print(f"Wrote {len(written_vars)} per-variable files to data/vars/, plus matchtable.json, lakelocations.json, last_updated.json")
 
 
 if __name__ == "__main__":
