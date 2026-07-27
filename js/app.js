@@ -355,8 +355,9 @@ function renderPlot() {
       });
     });
 
-    const layout = buildLayout(varName, logY);
+    const layout = buildLayout(varName, logY, "linear");
     // layout.xaxis.title = "Year";
+    layout.xaxis.tickformat = "d";
     drawPlotly(traces, layout);
 
   } else {

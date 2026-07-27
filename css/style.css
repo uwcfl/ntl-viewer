@@ -191,7 +191,7 @@ body {
   gap: 6px;
 }
 
-.field label:first-child {
+.field>label:first-child {
   font-size: .75rem;
   font-weight: 600;
   text-transform: uppercase;
