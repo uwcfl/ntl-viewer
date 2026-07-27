@@ -28,6 +28,8 @@ jobs:
           pip install pandas requests
 
       - name: Run fetch_data.py
+        env:
+          EDI_ACCESS_KEY: ${{ secrets.EDI_ACCESS_KEY }}
         run: python fetch_data.py
 
       - name: Commit and push updated data

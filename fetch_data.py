@@ -14,6 +14,7 @@ by the static site:
 
 import io
 import json
+import os
 import re
 import sys
 from datetime import date
@@ -25,21 +26,37 @@ PASTA_BASE = "https://pasta.lternet.edu/package"
 SCOPE = "knb-lter-ntl"
 HEADERS = {"User-Agent": "ntl-lter-viewer/1.0 (weekly data refresh)"}
 
+# EDI now requires an access key on every PASTA request (?key=<access_key>).
+# Read it from the environment so the actual value never lives in source
+# control; the GitHub Actions workflow injects it from a repo secret.
+EDI_ACCESS_KEY = os.environ.get("EDI_ACCESS_KEY")
+if not EDI_ACCESS_KEY:
+    raise RuntimeError(
+        "EDI_ACCESS_KEY environment variable is not set. "
+        "Set it as a GitHub Actions secret and pass it in via `env:` "
+        "in update-data.yml."
+    )
+
 # ---------------------------------------------------------------------------
 # Generic EDI helpers
 # ---------------------------------------------------------------------------
 
 
 def newest_revision(identifier: str) -> str:
-    url = f"{PASTA_BASE}/eml/{SCOPE}/{identifier}?filter=newest"
-    r = requests.get(url, headers=HEADERS, timeout=60)
+    url = f"{PASTA_BASE}/eml/{SCOPE}/{identifier}"
+    r = requests.get(
+        url,
+        headers=HEADERS,
+        params={"filter": "newest", "key": EDI_ACCESS_KEY},
+        timeout=60,
+    )
     r.raise_for_status()
     return r.text.strip()
 
 
 def first_entity_id(identifier: str, revision: str) -> str:
     url = f"{PASTA_BASE}/data/eml/{SCOPE}/{identifier}/{revision}"
-    r = requests.get(url, headers=HEADERS, timeout=60)
+    r = requests.get(url, headers=HEADERS, params={"key": EDI_ACCESS_KEY}, timeout=60)
     r.raise_for_status()
     entity_ids = [line.strip() for line in r.text.splitlines() if line.strip()]
     if not entity_ids:
@@ -49,7 +66,7 @@ def first_entity_id(identifier: str, revision: str) -> str:
 
 def read_entity_csv(identifier: str, revision: str, entity_id: str) -> pd.DataFrame:
     url = f"{PASTA_BASE}/data/eml/{SCOPE}/{identifier}/{revision}/{entity_id}"
-    r = requests.get(url, headers=HEADERS, timeout=180)
+    r = requests.get(url, headers=HEADERS, params={"key": EDI_ACCESS_KEY}, timeout=180)
     r.raise_for_status()
     return pd.read_csv(io.StringIO(r.text), low_memory=False)
 
