@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NTL-LTER Data Viewer</title>
   <meta name="description"
-    content="Interactive viewer for North Temperate Lakes Long-Term Ecological Research (NTL-LTER) data. Explore temperature, nutrients, ions, Secchi depth, ice duration, and zooplankton across 11 Wisconsin lakes from 1981 to present.">
+    content="Interactive viewer for North Temperate Lakes Long-Term Ecological Research (NTL-LTER) data. Explore temperature, nutrients, ions, Secchi depth, ice duration, zooplankton, and fish/crayfish CPUE across 11 Wisconsin lakes from 1981 to present.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -30,9 +30,6 @@
         <h1>NTL&#8211;LTER Data Viewer</h1>
         <p class="subtitle">North Temperate Lakes Long-Term Ecological Research</p>
       </div>
-      <!-- <div class="masthead-meta">
-      <span id="lastUpdated" class="updated-badge">&#8212;</span>
-    </div> -->
     </div>
     <div class="depth-line" aria-hidden="true"></div>
   </header>
@@ -54,24 +51,38 @@
         </select>
       </div>
 
-      <div class="field">
+      <!-- Depth Input (Standard Variables) -->
+      <div class="field" id="depthField">
         <label for="depthSelect">Select depth (m)</label>
         <select id="depthSelect"></select>
       </div>
 
-      <div class="field">
+      <!-- Species & Gear Inputs (Catch / CPUE Variables) -->
+      <div class="field" id="speciesField" hidden>
+        <label for="speciesSelect">Select species</label>
+        <select id="speciesSelect"></select>
+      </div>
+
+      <div class="field" id="gearField" hidden>
+        <label for="gearSelect">Select gear</label>
+        <select id="gearSelect"></select>
+      </div>
+
+      <div class="field" id="plotTypeField">
         <label>Plot type</label>
         <div class="radio-group" id="plotTypeGroup">
-          <label class="radio-option"><input type="radio" name="plotType" value="plot.ts" checked> Time-Series</label>
-          <label class="radio-option"><input type="radio" name="plotType" value="plot.am"> Annual Means</label>
-          <label class="radio-option"><input type="radio" name="plotType" value="plot.mb"> Monthly Boxplots</label>
+          <label class="radio-option" id="optTS"><input type="radio" name="plotType" value="plot.ts" checked>
+            Time-Series</label>
+          <label class="radio-option" id="optAM"><input type="radio" name="plotType" value="plot.am"> Annual
+            Means</label>
+          <label class="radio-option" id="optMB"><input type="radio" name="plotType" value="plot.mb"> Monthly
+            Boxplots</label>
         </div>
       </div>
 
       <div class="field">
         <label>Options</label>
         <div class="checkbox-group">
-          <!-- <label class="checkbox-option"><input type="checkbox" id="freeYAxis"> Free y-axis</label> -->
           <label class="checkbox-option"><input type="checkbox" id="logYAxis"> Log y-axis</label>
         </div>
       </div>
