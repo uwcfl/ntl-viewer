@@ -153,5 +153,15 @@
     "var": "rotifer",
     "name": "Rotifer (#/L)",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "rusty",
+    "name": "Rusty Crayfish CPUE (per trap)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=3"
+  },
+  {
+    "var": "fish",
+    "name": "Fish CPUE (per unit effort)",
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=7"
   }
 ]
