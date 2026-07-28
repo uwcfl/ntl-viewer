@@ -60,7 +60,9 @@ def first_entity_id(identifier: str, revision: str) -> str:
     r.raise_for_status()
     entity_ids = [line.strip() for line in r.text.splitlines() if line.strip()]
     if not entity_ids:
-        raise RuntimeError(f"No data entities found for {SCOPE}.{identifier}.{revision}")
+        raise RuntimeError(
+            f"No data entities found for {SCOPE}.{identifier}.{revision}"
+        )
     return entity_ids[0]
 
 
@@ -86,8 +88,19 @@ def load_latest_package(identifier: str) -> pd.DataFrame:
 # used throughout server.R)
 # ---------------------------------------------------------------------------
 
-ID_CANDIDATES = ["lakeid", "year4", "daynum", "sampledate", "depth", "rep", "sta", "event"]
-BAD_FLAG_PATTERN = re.compile(r"[AKLHU]")  # flags to exclude, matches str_detect(error,'A|K|L|H'[|U'])
+ID_CANDIDATES = [
+    "lakeid",
+    "year4",
+    "daynum",
+    "sampledate",
+    "depth",
+    "rep",
+    "sta",
+    "event",
+]
+BAD_FLAG_PATTERN = re.compile(
+    r"[AKLHU]"
+)  # flags to exclude, matches str_detect(error,'A|K|L|H'[|U'])
 
 
 def melt_value_flag_columns(
@@ -109,8 +122,16 @@ def melt_value_flag_columns(
     Columns with no matching flag column are still melted (error = NA).
     """
     id_cols = [c for c in id_cols if c in df.columns]
-    flag_cols = {c: c[len("flag") :] for c in df.columns if c.startswith("flag") and c != "flagdepth"}
-    value_cols = [c for c in df.columns if c not in id_cols and c not in flag_cols and f"flag{c}" != "flagdepth"]
+    flag_cols = {
+        c: c[len("flag") :]
+        for c in df.columns
+        if c.startswith("flag") and c != "flagdepth"
+    }
+    value_cols = [
+        c
+        for c in df.columns
+        if c not in id_cols and c not in flag_cols and f"flag{c}" != "flagdepth"
+    ]
     # value_cols should not themselves be flag columns
     value_cols = [c for c in value_cols if not c.startswith("flag")]
 
@@ -131,7 +152,12 @@ def melt_value_flag_columns(
     out = out[out["value"].notna() & (out["value"] >= 0)]
 
     if exclude_bad_flags:
-        bad = out["error"].astype("string").fillna("").apply(lambda s: bool(BAD_FLAG_PATTERN.search(s)))
+        bad = (
+            out["error"]
+            .astype("string")
+            .fillna("")
+            .apply(lambda s: bool(BAD_FLAG_PATTERN.search(s)))
+        )
         out = out[~bad]
 
     return out.drop(columns=["error"])
@@ -163,9 +189,15 @@ def build_temp() -> pd.DataFrame:
 def build_secchi() -> pd.DataFrame:
     print("Loading secchi - package 31 ...")
     raw = clean_negatives(load_latest_package("31"))
-    id_cols = [c for c in ["lakeid", "year4", "daynum", "sampledate", "sta"] if c in raw.columns]
+    id_cols = [
+        c
+        for c in ["lakeid", "year4", "daynum", "sampledate", "sta"]
+        if c in raw.columns
+    ]
     value_cols = [c for c in raw.columns if c not in id_cols]
-    out = raw.melt(id_vars=id_cols, value_vars=value_cols, var_name="item", value_name="value")
+    out = raw.melt(
+        id_vars=id_cols, value_vars=value_cols, var_name="item", value_name="value"
+    )
     out["value"] = pd.to_numeric(out["value"], errors="coerce")
     out = out[out["value"].notna() & (out["value"] >= 0)]
     out["depth"] = 0
@@ -176,7 +208,9 @@ def build_secchi() -> pd.DataFrame:
 def build_nutrients() -> pd.DataFrame:
     print("Loading nutrients - package 1 ...")
     raw = clean_negatives(load_latest_package("1"))
-    raw = raw.rename(columns={c: c.replace("_WSLH", ".WSLH") for c in raw.columns if "_WSLH" in c})
+    raw = raw.rename(
+        columns={c: c.replace("_WSLH", ".WSLH") for c in raw.columns if "_WSLH" in c}
+    )
     out = melt_value_flag_columns(raw, ID_CANDIDATES, exclude_bad_flags=True)
     is_wslh = out["item"].str.contains(r"\.WSLH", regex=True)
     out.loc[is_wslh, "value"] = out.loc[is_wslh, "value"] * 1000  # mg -> ug
@@ -188,17 +222,20 @@ def build_ions() -> pd.DataFrame:
     print("Loading major ions - package 2 ...")
     raw = clean_negatives(load_latest_package("2"))
     raw = raw.rename(
-        columns={c: c.replace("_sloh", ".sloh").replace("_n", ".n") for c in raw.columns}
+        columns={
+            c: c.replace("_sloh", ".sloh").replace("_n", ".n") for c in raw.columns
+        }
     )
     out = melt_value_flag_columns(raw, ID_CANDIDATES, exclude_bad_flags=True)
     return out
+
 
 def build_ice() -> pd.DataFrame:
     print("Loading ice duration - packages 32 (north) + 33 (south) ...")
     north = load_latest_package("32")[["lakeid", "year", "duration"]]
     south = load_latest_package("33")[["lakeid", "year", "duration"]]
-    south_nona = south.dropna(subset=['year']).copy()
-    south_nona['year'] = south_nona['year'].astype(int)
+    south_nona = south.dropna(subset=["year"]).copy()
+    south_nona["year"] = south_nona["year"].astype(int)
     ice = pd.concat([north, south_nona], ignore_index=True)
     ice = ice.rename(columns={"year": "year4", "duration": "value"})
     ice["item"] = "iceduration"
@@ -207,7 +244,19 @@ def build_ice() -> pd.DataFrame:
     ice["depth"] = 0
     ice["rep"] = 1
     ice["sta"] = 1
-    return ice[["lakeid", "year4", "daynum", "sampledate", "depth", "rep", "sta", "item", "value"]]
+    return ice[
+        [
+            "lakeid",
+            "year4",
+            "daynum",
+            "sampledate",
+            "depth",
+            "rep",
+            "sta",
+            "item",
+            "value",
+        ]
+    ]
 
 
 ZOOP_GROUP_MAP = {
@@ -228,7 +277,9 @@ def build_zoops() -> pd.DataFrame:
     zoop["item"] = zoop["code"].map(ZOOP_GROUP_MAP)
     zoop = zoop.rename(columns={"sample_date": "sampledate"})
     zoop = (
-        zoop.groupby(["lakeid", "year4", "sampledate", "item"], as_index=False)["density"]
+        zoop.groupby(["lakeid", "year4", "sampledate", "item"], as_index=False)[
+            "density"
+        ]
         .sum()
         .rename(columns={"density": "value"})
     )
@@ -237,7 +288,19 @@ def build_zoops() -> pd.DataFrame:
     zoop["depth"] = 0
     zoop["rep"] = 1
     zoop["sta"] = 1
-    return zoop[["lakeid", "year4", "daynum", "sampledate", "depth", "rep", "sta", "item", "value"]]
+    return zoop[
+        [
+            "lakeid",
+            "year4",
+            "daynum",
+            "sampledate",
+            "depth",
+            "rep",
+            "sta",
+            "item",
+            "value",
+        ]
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -306,14 +369,14 @@ MATCHTABLE = [
     {"var": "tic", "name": "Total Inorganic Carbon (mg/L)", "package": 1},
     {"var": "no3no2", "name": "Nitrate + Nitrite as N (\u00b5g/L)", "package": 1},
     {"var": "nh4", "name": "Ammonium as N (\u00b5g/L)", "package": 1},
-    {"var": "totnuf", "name": "Total Nitrogen unfiltered (\u00b5g/L)", "package": 1},
-    {"var": "totnf", "name": "Total Nitrogen filtered (\u00b5g/L)", "package": 1},
+    {"var": "totnuf", "name": "Total Nitrogen (\u00b5g/L) unfiltered", "package": 1},
+    {"var": "totnf", "name": "Total Nitrogen (\u00b5g/L) filtered", "package": 1},
     {"var": "drp", "name": "Dissolved Reactive Phosphorus (\u00b5g/L)", "package": 1},
-    {"var": "totpuf", "name": "Total Phosphorus unfiltered (\u00b5g/L)", "package": 1},
-    {"var": "totpf", "name": "Total Phosphorus filtered (\u00b5g/L)", "package": 1},
+    {"var": "totpuf", "name": "Total Phosphorus (\u00b5g/L) unfiltered", "package": 1},
+    {"var": "totpf", "name": "Total Phosphorus (\u00b5g/L) filtered", "package": 1},
     {"var": "drsif", "name": "Dissolved Reactive Silica (\u00b5g/L)", "package": 1},
     {"var": "ph", "name": "pH", "package": 2},
-    {"var": "alk", "name": "Alkalinity (ueq/L)", "package": 2},
+    {"var": "alk", "name": "Alkalinity (\u00b5eq/L)", "package": 2},
     {"var": "ca", "name": "Calcium (mg/L)", "package": 2},
     {"var": "mg", "name": "Magnesium (mg/L)", "package": 2},
     {"var": "na", "name": "Sodium (mg/L)", "package": 2},
@@ -321,45 +384,113 @@ MATCHTABLE = [
     {"var": "so4", "name": "Sulfate (mg/L)", "package": 2},
     {"var": "cl", "name": "Chloride (mg/L)", "package": 2},
     {"var": "cond", "name": "Specific Conductance (\u00b5S/cm)", "package": 2},
-    {"var": "secview", "name": "Secchi with viewer", "package": 31},
-    {"var": "secnview", "name": "Secchi without viewer", "package": 31},
-    {"var": "iceduration", "name": "Lake ice duration (days)", "package": 32},
+    {"var": "secview", "name": "Secchi Depth (m) with viewer", "package": 31},
+    {"var": "secnview", "name": "Secchi Depth (m) without viewer", "package": 31},
+    {"var": "iceduration", "name": "Lake Ice Duration (days)", "package": 32},
     {"var": "cladocera", "name": "Cladocera (#/L)", "package": 37},
     {"var": "calanoid", "name": "Calanoid copepod (#/L)", "package": 37},
     {"var": "cyclopoid", "name": "Cyclopoid copepod (#/L)", "package": 37},
     {"var": "rotifer", "name": "Rotifer (#/L)", "package": 37},
 ]
 for row in MATCHTABLE:
-    row["url"] = f"https://portal.edirepository.org/nis/mapbrowse?scope={SCOPE}&identifier={row['package']}"
+    row["url"] = (
+        f"https://portal.edirepository.org/nis/mapbrowse?scope={SCOPE}&identifier={row['package']}"
+    )
     del row["package"]
 
 MATCHTABLE.append(
     {
         "var": "rusty",
-        "name": "Rusty Crayfish CPUE (per trap)",
+        "name": "Crayfish (CPUE)",
         "url": f"https://portal.edirepository.org/nis/mapbrowse?scope={SCOPE}&identifier=3",
     }
 )
 MATCHTABLE.append(
     {
         "var": "fish",
-        "name": "Fish CPUE (per unit effort)",
+        "name": "Fish (CPUE)",
         "url": f"https://portal.edirepository.org/nis/mapbrowse?scope={SCOPE}&identifier=7",
     }
 )
 
 LAKE_META = [
-    {"lakeid": "AL", "lake": "Allequash Lake", "region": "north", "lat": 46.038317, "long": -89.620617},
-    {"lakeid": "BM", "lake": "Big Musky Lake", "region": "north", "lat": 46.021067, "long": -89.611783},
-    {"lakeid": "CB", "lake": "Crystal Bog", "region": "north", "lat": 46.007583, "long": -89.606183},
-    {"lakeid": "CR", "lake": "Crystal Lake", "region": "north", "lat": 46.00275, "long": -89.612233},
-    {"lakeid": "SP", "lake": "Sparkling Lake", "region": "north", "lat": 46.007733, "long": -89.701183},
-    {"lakeid": "TB", "lake": "Trout Bog", "region": "north", "lat": 46.04125, "long": -89.686283},
-    {"lakeid": "TR", "lake": "Trout Lake", "region": "north", "lat": 46.029267, "long": -89.665017},
-    {"lakeid": "ME", "lake": "Lake Mendota", "region": "south", "lat": 43.09885, "long": -89.40545},
-    {"lakeid": "MO", "lake": "Lake Monona", "region": "south", "lat": 43.06337, "long": -89.36086},
-    {"lakeid": "WI", "lake": "Lake Wingra", "region": "south", "lat": 43.05258, "long": -89.42499},
-    {"lakeid": "FI", "lake": "Fish Lake", "region": "south", "lat": 43.28733, "long": -89.65173},
+    {
+        "lakeid": "AL",
+        "lake": "Allequash Lake",
+        "region": "north",
+        "lat": 46.038317,
+        "long": -89.620617,
+    },
+    {
+        "lakeid": "BM",
+        "lake": "Big Musky Lake",
+        "region": "north",
+        "lat": 46.021067,
+        "long": -89.611783,
+    },
+    {
+        "lakeid": "CB",
+        "lake": "Crystal Bog",
+        "region": "north",
+        "lat": 46.007583,
+        "long": -89.606183,
+    },
+    {
+        "lakeid": "CR",
+        "lake": "Crystal Lake",
+        "region": "north",
+        "lat": 46.00275,
+        "long": -89.612233,
+    },
+    {
+        "lakeid": "SP",
+        "lake": "Sparkling Lake",
+        "region": "north",
+        "lat": 46.007733,
+        "long": -89.701183,
+    },
+    {
+        "lakeid": "TB",
+        "lake": "Trout Bog",
+        "region": "north",
+        "lat": 46.04125,
+        "long": -89.686283,
+    },
+    {
+        "lakeid": "TR",
+        "lake": "Trout Lake",
+        "region": "north",
+        "lat": 46.029267,
+        "long": -89.665017,
+    },
+    {
+        "lakeid": "ME",
+        "lake": "Lake Mendota",
+        "region": "south",
+        "lat": 43.09885,
+        "long": -89.40545,
+    },
+    {
+        "lakeid": "MO",
+        "lake": "Lake Monona",
+        "region": "south",
+        "lat": 43.06337,
+        "long": -89.36086,
+    },
+    {
+        "lakeid": "WI",
+        "lake": "Lake Wingra",
+        "region": "south",
+        "lat": 43.05258,
+        "long": -89.42499,
+    },
+    {
+        "lakeid": "FI",
+        "lake": "Fish Lake",
+        "region": "south",
+        "lat": 43.28733,
+        "long": -89.65173,
+    },
 ]
 LAKEID_TO_NAME = {row["lakeid"]: row["lake"] for row in LAKE_META}
 
@@ -396,9 +527,25 @@ def main():
         all_lter = pd.concat(frames, ignore_index=True)
         all_lter["lakename"] = all_lter["lakeid"].map(LAKEID_TO_NAME)
         all_lter = all_lter[all_lter["lakename"].notna()]
-        all_lter["sampledate"] = pd.to_datetime(all_lter["sampledate"]).dt.strftime("%Y-%m-%d")
+        all_lter["sampledate"] = pd.to_datetime(all_lter["sampledate"]).dt.strftime(
+            "%Y-%m-%d"
+        )
 
-        keep_cols = [c for c in ["lakeid", "lakename", "year4", "daynum", "sampledate", "depth", "rep", "item", "value"] if c in all_lter.columns]
+        keep_cols = [
+            c
+            for c in [
+                "lakeid",
+                "lakename",
+                "year4",
+                "daynum",
+                "sampledate",
+                "depth",
+                "rep",
+                "item",
+                "value",
+            ]
+            if c in all_lter.columns
+        ]
         all_lter = all_lter[keep_cols]
 
         print(f"Combined physical/chemical dataset: {all_lter.shape[0]:,} rows")
@@ -472,7 +619,9 @@ def main():
     with open("data/last_updated.json", "w") as f:
         json.dump({"updated": date.today().isoformat()}, f)
 
-    print(f"Wrote {len(written_vars)} per-variable files to data/vars/, plus matchtable.json, lakelocations.json, last_updated.json")
+    print(
+        f"Wrote {len(written_vars)} per-variable files to data/vars/, plus matchtable.json, lakelocations.json, last_updated.json"
+    )
 
 
 if __name__ == "__main__":
