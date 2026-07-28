@@ -312,7 +312,10 @@ function updateControlVisibility() {
   elGearField.hidden = !catchVar;
 
   // Restrict plot types: Catch datasets support Time-Series only
-  if (catchVar) {
+  // Lake Ice also only makes sense for time series
+  const disableOtherPlots = catchVar || state.currentVar === "iceduration";
+
+  if (disableOtherPlots) {
     const tsRadio = elPlotTypeGroup.querySelector('input[value="plot.ts"]');
     if (tsRadio) tsRadio.checked = true;
     elOptAM.hidden = true;
