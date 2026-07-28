@@ -46,12 +46,12 @@
   },
   {
     "var": "totnuf",
-    "name": "Total Nitrogen unfiltered (\u00b5g/L)",
+    "name": "Total Nitrogen (\u00b5g/L) unfiltered",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
   },
   {
     "var": "totnf",
-    "name": "Total Nitrogen filtered (\u00b5g/L)",
+    "name": "Total Nitrogen (\u00b5g/L) filtered",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
   },
   {
@@ -61,12 +61,12 @@
   },
   {
     "var": "totpuf",
-    "name": "Total Phosphorus unfiltered (\u00b5g/L)",
+    "name": "Total Phosphorus (\u00b5g/L) unfiltered",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
   },
   {
     "var": "totpf",
-    "name": "Total Phosphorus filtered (\u00b5g/L)",
+    "name": "Total Phosphorus (\u00b5g/L) filtered",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
   },
   {
@@ -81,7 +81,7 @@
   },
   {
     "var": "alk",
-    "name": "Alkalinity (ueq/L)",
+    "name": "Alkalinity (\u00b5eq/L)",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
   },
   {
@@ -121,17 +121,17 @@
   },
   {
     "var": "secview",
-    "name": "Secchi with viewer",
+    "name": "Secchi Depth (m) with viewer",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=31"
   },
   {
     "var": "secnview",
-    "name": "Secchi without viewer",
+    "name": "Secchi Depth (m) without viewer",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=31"
   },
   {
     "var": "iceduration",
-    "name": "Lake ice duration (days)",
+    "name": "Lake Ice Duration (days)",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=32"
   },
   {
@@ -156,12 +156,12 @@
   },
   {
     "var": "rusty",
-    "name": "Rusty Crayfish CPUE (per trap)",
+    "name": "Crayfish (CPUE)",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=3"
   },
   {
     "var": "fish",
-    "name": "Fish CPUE (per unit effort)",
+    "name": "Fish (CPUE)",
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=7"
   }
 ]
