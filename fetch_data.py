@@ -17,7 +17,7 @@ import json
 import os
 import re
 import sys
-from datetime import date
+from datetime import datetime, timezone
 
 import pandas as pd
 import requests
@@ -25,6 +25,10 @@ import requests
 PASTA_BASE = "https://pasta.lternet.edu/package"
 SCOPE = "knb-lter-ntl"
 HEADERS = {"User-Agent": "ntl-lter-viewer/1.0 (weekly data refresh)"}
+
+# Packages monitored for updates
+PACKAGES = ["1", "2", "3", "7", "29", "31", "32", "33", "37", "90"]
+TRACKING_FILE = "data/last_download.json"
 
 # EDI now requires an access key on every PASTA request (?key=<access_key>).
 # Read it from the environment so the actual value never lives in source
@@ -41,8 +45,12 @@ if not EDI_ACCESS_KEY:
 # Generic EDI helpers
 # ---------------------------------------------------------------------------
 
+REVISION_CACHE = {}
+
 
 def newest_revision(identifier: str) -> str:
+    if identifier in REVISION_CACHE:
+        return REVISION_CACHE[identifier]
     url = f"{PASTA_BASE}/eml/{SCOPE}/{identifier}"
     r = requests.get(
         url,
@@ -51,7 +59,47 @@ def newest_revision(identifier: str) -> str:
         timeout=60,
     )
     r.raise_for_status()
-    return r.text.strip()
+    rev = r.text.strip()
+    REVISION_CACHE[identifier] = rev
+    return rev
+
+
+def check_for_updates() -> tuple[bool, dict[str, str]]:
+    """Check EDI for newest revisions and compare against saved tracking file."""
+    print("Checking EDI repository for dataset revisions...")
+    current_revisions = {}
+    for pkg in PACKAGES:
+        try:
+            current_revisions[pkg] = newest_revision(pkg)
+        except Exception as exc:  # noqa: BLE001
+            print(
+                f"  !! failed to check revision for package {pkg}: {exc}",
+                file=sys.stderr,
+            )
+
+    if not os.path.exists(TRACKING_FILE):
+        print("No prior download tracking file found. Processing required.")
+        return True, current_revisions
+
+    try:
+        with open(TRACKING_FILE, "r") as f:
+            saved_state = json.load(f)
+        saved_revisions = saved_state.get("revisions", {})
+        last_date = saved_state.get("last_download_date", "unknown")
+
+        if current_revisions and saved_revisions == current_revisions:
+            print(
+                f"No dataset updates detected on EDI since last download on {last_date}."
+            )
+            return False, current_revisions
+
+        print("New dataset updates detected on EDI.")
+        return True, current_revisions
+    except Exception as exc:  # noqa: BLE001
+        print(
+            f"Warning: Failed to read tracking file ({exc}). Proceeding with download."
+        )
+        return True, current_revisions
 
 
 def first_entity_id(identifier: str, revision: str) -> str:
@@ -501,7 +549,10 @@ LAKEID_TO_NAME = {row["lakeid"]: row["lake"] for row in LAKE_META}
 
 
 def main():
-    import os
+    has_updates, current_revisions = check_for_updates()
+    if not has_updates:
+        print("Skipping download and processing.")
+        return
 
     os.makedirs("data/vars", exist_ok=True)
     written_vars = []
@@ -612,15 +663,26 @@ def main():
         print("No datasets loaded successfully; aborting.", file=sys.stderr)
         sys.exit(1)
 
+    today_utc = datetime.now(timezone.utc).date().isoformat()
+
     with open("data/matchtable.json", "w") as f:
         json.dump(MATCHTABLE, f, indent=2)
     with open("data/lakelocations.json", "w") as f:
         json.dump(LAKE_META, f, indent=2)
     with open("data/last_updated.json", "w") as f:
-        json.dump({"updated": date.today().isoformat()}, f)
+        json.dump({"updated": today_utc}, f)
+    with open(TRACKING_FILE, "w") as f:
+        json.dump(
+            {
+                "last_download_date": today_utc,
+                "revisions": current_revisions,
+            },
+            f,
+            indent=2,
+        )
 
     print(
-        f"Wrote {len(written_vars)} per-variable files to data/vars/, plus matchtable.json, lakelocations.json, last_updated.json"
+        f"Wrote {len(written_vars)} per-variable files to data/vars/, plus matchtable.json, lakelocations.json, last_updated.json, and {TRACKING_FILE}"
     )
 
 
