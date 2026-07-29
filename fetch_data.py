@@ -669,8 +669,6 @@ def main():
         json.dump(MATCHTABLE, f, indent=2)
     with open("data/lakelocations.json", "w") as f:
         json.dump(LAKE_META, f, indent=2)
-    with open("data/last_updated.json", "w") as f:
-        json.dump({"updated": today_utc}, f)
     with open(TRACKING_FILE, "w") as f:
         json.dump(
             {
@@ -682,7 +680,7 @@ def main():
         )
 
     print(
-        f"Wrote {len(written_vars)} per-variable files to data/vars/, plus matchtable.json, lakelocations.json, last_updated.json, and {TRACKING_FILE}"
+        f"Wrote {len(written_vars)} per-variable files to data/vars/, plus matchtable.json, lakelocations.json, and {TRACKING_FILE}"
     )
 
 
