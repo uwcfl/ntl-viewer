@@ -79,7 +79,7 @@ let elLakeSelect, elVarSelect, elDepthSelect, elDepthField,
   elSpeciesSelect, elSpeciesField, elGearSelect, elGearField,
   elPlotTypeGroup, elOptAM, elOptMB, elLogYAxis,
   elShowMapBtn, elCloseMapBtn, elMapModal, elLeafletMap,
-  elChart, elChartLoading, elCitationLine, elLastUpdated, elModalHintPlural;
+  elChart, elChartLoading, elCitationLine, elModalHintPlural;
 
 // ===========================================================================
 // Application Boot & Initialization
@@ -106,17 +106,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   elChart = document.getElementById("chart");
   elChartLoading = document.getElementById("chartLoading");
   elCitationLine = document.getElementById("citationLine");
-  elLastUpdated = document.getElementById("lastUpdated");
   elModalHintPlural = document.getElementById("modalHintPlural");
 
   showLoading(true);
 
   try {
     // Fetch static metadata files in parallel
-    const [matchtable, lakeLocations, lastUpdated] = await Promise.all([
+    const [matchtable, lakeLocations] = await Promise.all([
       fetchJSON("data/matchtable.json"),
       fetchJSON("data/lakelocations.json"),
-      fetchJSON("data/last_updated.json"),
     ]);
 
     state.matchtable = matchtable;
@@ -125,7 +123,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Populate dropdown selectors and citation info
     populateLakeSelect(lakeLocations);
     populateVarSelect(matchtable);
-    updateLastUpdated(lastUpdated.updated);
     attachListeners();
 
     // Trigger initial variable load and plot rendering
@@ -840,11 +837,4 @@ function showError(msg) {
   elChart.innerHTML = `<div class="chart-loading" style="height:100%">
     <span style="color:#e8604c;font-size:.9rem">⚠ ${msg}</span>
   </div>`;
-}
-
-/** Displays dataset last update timestamp in UI */
-function updateLastUpdated(dateStr) {
-  if (!elLastUpdated || !dateStr) return;
-  const d = new Date(dateStr + "T00:00:00");
-  elLastUpdated.textContent = "Updated " + d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
