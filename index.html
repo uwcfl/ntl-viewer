@@ -44,11 +44,31 @@
       </div>
 
       <div class="field">
-        <label for="lakeSelect">Choose lake</label>
-        <select id="lakeSelect">
-          <optgroup label="Northern Lakes" id="optNorth"></optgroup>
-          <optgroup label="Southern Lakes" id="optSouth"></optgroup>
-        </select>
+        <label for="lakeSelectBtn">Choose lake(s)</label>
+        <div class="multiselect" id="lakeMultiselect">
+          <button type="button" class="multiselect-btn" id="lakeSelectBtn" aria-haspopup="listbox"
+            aria-expanded="false">
+            <span id="lakeSelectLabel">Select lakes&#8230;</span>
+            <svg class="multiselect-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"
+              stroke="currentColor" stroke-width="1.6">
+              <path d="M2 4l4 4 4-4" />
+            </svg>
+          </button>
+          <div class="multiselect-panel" id="lakePanel" role="listbox" aria-multiselectable="true" hidden>
+            <div class="multiselect-group">
+              <label class="multiselect-option multiselect-group-option">
+                <input type="checkbox" id="chkAllNorth"> All Northern Lakes
+              </label>
+              <div class="multiselect-suboptions" id="northLakeOptions"></div>
+            </div>
+            <div class="multiselect-group">
+              <label class="multiselect-option multiselect-group-option">
+                <input type="checkbox" id="chkAllSouth"> All Southern Lakes
+              </label>
+              <div class="multiselect-suboptions" id="southLakeOptions"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Depth Input (Standard Variables) -->
@@ -126,6 +146,10 @@
     <div class="depth-line" aria-hidden="true"></div>
     <div class="footer-inner">
       <p id="citationLine" class="citation-line"></p>
+      <p class="chart-help">
+        Tip: click and drag on the plot to zoom into a region (double-click to reset), and use the camera icon in
+        the toolbar above the plot to download it as a PNG.
+      </p>
       <p class="funding-note">This material is based upon work supported by the National Science Foundation under
         Cooperative Agreement #DEB-2025982, NTL LTER. Any opinions, findings, conclusions, or recommendations expressed
         in the material are those of the author(s) and do not necessarily reflect the views of the National Science

@@ -75,11 +75,13 @@ const state = {
 // DOM Element References
 // ===========================================================================
 
-let elLakeSelect, elVarSelect, elDepthSelect, elDepthField,
+let elVarSelect, elDepthSelect, elDepthField,
   elSpeciesSelect, elSpeciesField, elGearSelect, elGearField,
   elPlotTypeGroup, elOptAM, elOptMB, elLogYAxis,
   elShowMapBtn, elCloseMapBtn, elMapModal, elLeafletMap,
-  elChart, elChartLoading, elCitationLine, elModalHintPlural;
+  elChart, elChartLoading, elCitationLine, elModalHintPlural,
+  elLakeMultiselect, elLakeSelectBtn, elLakePanel, elLakeSelectLabel,
+  elChkAllNorth, elChkAllSouth, elNorthLakeOptions, elSouthLakeOptions;
 
 // ===========================================================================
 // Application Boot & Initialization
@@ -87,7 +89,14 @@ let elLakeSelect, elVarSelect, elDepthSelect, elDepthField,
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Bind DOM elements
-  elLakeSelect = document.getElementById("lakeSelect");
+  elLakeMultiselect = document.getElementById("lakeMultiselect");
+  elLakeSelectBtn = document.getElementById("lakeSelectBtn");
+  elLakePanel = document.getElementById("lakePanel");
+  elLakeSelectLabel = document.getElementById("lakeSelectLabel");
+  elChkAllNorth = document.getElementById("chkAllNorth");
+  elChkAllSouth = document.getElementById("chkAllSouth");
+  elNorthLakeOptions = document.getElementById("northLakeOptions");
+  elSouthLakeOptions = document.getElementById("southLakeOptions");
   elVarSelect = document.getElementById("varSelect");
   elDepthSelect = document.getElementById("depthSelect");
   elDepthField = document.getElementById("depthField");
@@ -148,23 +157,72 @@ function isCatchVar(varCode) {
 }
 
 /**
- * Populates the Lake dropdown selector with optgroups for Northern and Southern lakes.
+ * Populates the Lake multi-select checkbox panel, grouped into Northern and Southern lakes,
+ * each with a group-level "select all" checkbox above the individual lake checkboxes.
  * @param {Array<Object>} lakeLocations - Array of lake metadata objects
  */
 function populateLakeSelect(lakeLocations) {
-  const northGroup = document.getElementById("optNorth");
-  const southGroup = document.getElementById("optSouth");
-
-  northGroup.innerHTML = `<option value="__all_north__">All northern lakes</option>`;
-  southGroup.innerHTML = `<option value="__all_south__">All southern lakes</option>`;
+  elNorthLakeOptions.innerHTML = "";
+  elSouthLakeOptions.innerHTML = "";
 
   lakeLocations.forEach(loc => {
-    const opt = document.createElement("option");
-    opt.value = loc.lake;
-    opt.textContent = loc.lake;
-    if (loc.region === "north") northGroup.appendChild(opt);
-    else southGroup.appendChild(opt);
+    const id = `lake_${loc.lake.replace(/\W+/g, "_")}`;
+    const wrapper = document.createElement("label");
+    wrapper.className = "multiselect-option";
+    wrapper.innerHTML = `<input type="checkbox" id="${id}" class="lakeCheckbox" value="${loc.lake}" data-region="${loc.region}"> ${loc.lake}`;
+    if (loc.region === "north") elNorthLakeOptions.appendChild(wrapper);
+    else elSouthLakeOptions.appendChild(wrapper);
   });
+
+  // Default selection: all Northern lakes, matching the viewer's original default.
+  setGroupChecked("north", true);
+  syncGroupCheckbox("north");
+  syncGroupCheckbox("south");
+  updateLakeSelectLabel();
+}
+
+/**
+ * Checks or unchecks every individual lake checkbox belonging to a given region.
+ * @param {string} region - "north" or "south"
+ * @param {boolean} checked - Target checked state
+ */
+function setGroupChecked(region, checked) {
+  document.querySelectorAll(`.lakeCheckbox[data-region="${region}"]`).forEach(cb => {
+    cb.checked = checked;
+  });
+}
+
+/**
+ * Syncs a region's "select all" checkbox to reflect the state of its individual
+ * lake checkboxes (checked, unchecked, or indeterminate).
+ * @param {string} region - "north" or "south"
+ */
+function syncGroupCheckbox(region) {
+  const boxes = [...document.querySelectorAll(`.lakeCheckbox[data-region="${region}"]`)];
+  const groupCb = region === "north" ? elChkAllNorth : elChkAllSouth;
+  const checkedCount = boxes.filter(cb => cb.checked).length;
+  groupCb.checked = checkedCount === boxes.length && boxes.length > 0;
+  groupCb.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
+}
+
+/** Updates the lake picker button label to summarize the current selection. */
+function updateLakeSelectLabel() {
+  const selected = getSelectedLakes();
+  if (!elLakeSelectLabel) return;
+
+  if (selected.length === 0) {
+    elLakeSelectLabel.textContent = "Select lakes\u2026";
+  } else if (selected.length === NORTH_LAKES.length && NORTH_LAKES.every(l => selected.includes(l))
+    && !selected.some(l => SOUTH_LAKES.includes(l))) {
+    elLakeSelectLabel.textContent = "All Northern Lakes";
+  } else if (selected.length === SOUTH_LAKES.length && SOUTH_LAKES.every(l => selected.includes(l))
+    && !selected.some(l => NORTH_LAKES.includes(l))) {
+    elLakeSelectLabel.textContent = "All Southern Lakes";
+  } else if (selected.length === 1) {
+    elLakeSelectLabel.textContent = selected[0];
+  } else {
+    elLakeSelectLabel.textContent = `${selected.length} lakes selected`;
+  }
 }
 
 /**
@@ -203,7 +261,8 @@ function populateVarSelect(matchtable) {
 
 /** Attaches event listeners to interactive UI elements */
 function attachListeners() {
-  elLakeSelect.addEventListener("change", onLakeChange);
+  attachLakeMultiselectListeners();
+
   elVarSelect.addEventListener("change", onVarChange);
   elDepthSelect.addEventListener("change", renderPlot);
   elSpeciesSelect.addEventListener("change", onSpeciesChange);
@@ -218,7 +277,56 @@ function attachListeners() {
   });
   document.addEventListener("keydown", e => {
     if (e.key === "Escape" && !elMapModal.hidden) closeMap();
+    if (e.key === "Escape" && !elLakePanel.hidden) closeLakePanel();
   });
+}
+
+/** Wires up open/close behavior and change handlers for the lake multi-select dropdown */
+function attachLakeMultiselectListeners() {
+  elLakeSelectBtn.addEventListener("click", () => {
+    const isOpen = !elLakePanel.hidden;
+    isOpen ? closeLakePanel() : openLakePanel();
+  });
+
+  document.addEventListener("click", e => {
+    if (!elLakePanel.hidden && !elLakeMultiselect.contains(e.target)) closeLakePanel();
+  });
+
+  // Individual lake checkboxes: keep the region's "select all" checkbox in sync
+  elLakeMultiselect.addEventListener("change", e => {
+    if (!e.target.classList.contains("lakeCheckbox")) return;
+    syncGroupCheckbox(e.target.dataset.region);
+    updateLakeSelectLabel();
+    onLakeChange();
+  });
+
+  // "All Northern Lakes" / "All Southern Lakes" group checkboxes
+  elChkAllNorth.addEventListener("change", () => {
+    setGroupChecked("north", elChkAllNorth.checked);
+    elChkAllNorth.indeterminate = false;
+    updateLakeSelectLabel();
+    onLakeChange();
+  });
+  elChkAllSouth.addEventListener("change", () => {
+    setGroupChecked("south", elChkAllSouth.checked);
+    elChkAllSouth.indeterminate = false;
+    updateLakeSelectLabel();
+    onLakeChange();
+  });
+}
+
+/** Opens the lake picker dropdown panel */
+function openLakePanel() {
+  elLakePanel.hidden = false;
+  elLakeMultiselect.classList.add("open");
+  elLakeSelectBtn.setAttribute("aria-expanded", "true");
+}
+
+/** Closes the lake picker dropdown panel */
+function closeLakePanel() {
+  elLakePanel.hidden = true;
+  elLakeMultiselect.classList.remove("open");
+  elLakeSelectBtn.setAttribute("aria-expanded", "false");
 }
 
 // ===========================================================================
@@ -328,14 +436,11 @@ function updateControlVisibility() {
 // ===========================================================================
 
 /**
- * Returns an array of individual lake names corresponding to the current lake select value.
+ * Returns an array of individual lake names currently checked in the lake multi-select.
  * @returns {Array<string>} Array of lake names
  */
 function getSelectedLakes() {
-  const val = elLakeSelect.value;
-  if (val === "__all_north__") return NORTH_LAKES;
-  if (val === "__all_south__") return SOUTH_LAKES;
-  return [val];
+  return [...document.querySelectorAll(".lakeCheckbox:checked")].map(cb => cb.value);
 }
 
 /** Dynamically populates the species dropdown based on current lake selection */
@@ -817,7 +922,7 @@ function updateCitation() {
   let cite_url = row.url;
 
   // Handle special case for Southern Lakes Ice Duration dataset
-  if (elVarSelect.value == "iceduration" && [...SOUTH_LAKES, "__all_south__"].includes(elLakeSelect.value))
+  if (elVarSelect.value == "iceduration" && getSelectedLakes().some(l => SOUTH_LAKES.includes(l)))
     cite_url = "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=33";
 
   elCitationLine.innerHTML =
