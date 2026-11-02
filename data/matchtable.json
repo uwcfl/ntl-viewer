@@ -2,166 +2,790 @@
   {
     "var": "wtemp",
     "name": "Water Temperature (\u00b0C)",
+    "group": "Physical",
+    "kind": "standard",
+    "packages": [
+      29,
+      401
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=29"
   },
   {
     "var": "o2",
     "name": "Dissolved Oxygen (mg/L)",
+    "group": "Physical",
+    "kind": "standard",
+    "packages": [
+      29,
+      401
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=29"
   },
   {
     "var": "o2sat",
     "name": "Dissolved Oxygen (% sat)",
+    "group": "Physical",
+    "kind": "standard",
+    "packages": [
+      29,
+      401
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=29"
   },
   {
-    "var": "doc",
-    "name": "Dissolved Organic Carbon (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+    "var": "llevel",
+    "name": "Lake Level (m above sea level)",
+    "group": "Physical",
+    "kind": "standard",
+    "packages": [
+      30
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=30"
   },
   {
-    "var": "dic",
-    "name": "Dissolved Inorganic Carbon (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+    "var": "iceduration",
+    "name": "Lake Ice Duration (days)",
+    "group": "Ice & Snow",
+    "kind": "annual",
+    "packages": [
+      32,
+      33
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=32"
   },
   {
-    "var": "toc",
-    "name": "Total Organic Carbon (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+    "var": "iceon",
+    "name": "Ice-On (day of year; >365 = January)",
+    "group": "Ice & Snow",
+    "kind": "annual",
+    "packages": [
+      32,
+      33
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=32"
   },
   {
-    "var": "tic",
-    "name": "Total Inorganic Carbon (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+    "var": "iceoff",
+    "name": "Ice-Off (day of year)",
+    "group": "Ice & Snow",
+    "kind": "annual",
+    "packages": [
+      32,
+      33
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=32"
   },
   {
-    "var": "no3no2",
-    "name": "Nitrate + Nitrite as N (\u00b5g/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+    "var": "totice",
+    "name": "Total Ice Thickness (cm)",
+    "group": "Ice & Snow",
+    "kind": "standard",
+    "packages": [
+      34
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=34"
   },
   {
-    "var": "nh4",
-    "name": "Ammonium as N (\u00b5g/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+    "var": "whiteice",
+    "name": "White Ice Thickness (cm)",
+    "group": "Ice & Snow",
+    "kind": "standard",
+    "packages": [
+      34
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=34"
   },
   {
-    "var": "totnuf",
-    "name": "Total Nitrogen (\u00b5g/L) unfiltered",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+    "var": "blueice",
+    "name": "Blue Ice Thickness (cm)",
+    "group": "Ice & Snow",
+    "kind": "standard",
+    "packages": [
+      34
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=34"
   },
   {
-    "var": "totnf",
-    "name": "Total Nitrogen (\u00b5g/L) filtered",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
-  },
-  {
-    "var": "drp",
-    "name": "Dissolved Reactive Phosphorus (\u00b5g/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
-  },
-  {
-    "var": "totpuf",
-    "name": "Total Phosphorus (\u00b5g/L) unfiltered",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
-  },
-  {
-    "var": "totpf",
-    "name": "Total Phosphorus (\u00b5g/L) filtered",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
-  },
-  {
-    "var": "drsif",
-    "name": "Dissolved Reactive Silica (\u00b5g/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
-  },
-  {
-    "var": "ph",
-    "name": "pH",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
-  },
-  {
-    "var": "alk",
-    "name": "Alkalinity (\u00b5eq/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
-  },
-  {
-    "var": "ca",
-    "name": "Calcium (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
-  },
-  {
-    "var": "mg",
-    "name": "Magnesium (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
-  },
-  {
-    "var": "na",
-    "name": "Sodium (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
-  },
-  {
-    "var": "k",
-    "name": "Potassium (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
-  },
-  {
-    "var": "so4",
-    "name": "Sulfate (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
-  },
-  {
-    "var": "cl",
-    "name": "Chloride (mg/L)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
-  },
-  {
-    "var": "cond",
-    "name": "Specific Conductance (\u00b5S/cm)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+    "var": "avsnow",
+    "name": "Snow Depth on Ice (cm)",
+    "group": "Ice & Snow",
+    "kind": "standard",
+    "packages": [
+      34
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=34"
   },
   {
     "var": "secview",
     "name": "Secchi Depth (m) with viewer",
+    "group": "Light & Clarity",
+    "kind": "standard",
+    "packages": [
+      31
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=31"
   },
   {
     "var": "secnview",
     "name": "Secchi Depth (m) without viewer",
+    "group": "Light & Clarity",
+    "kind": "standard",
+    "packages": [
+      31
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=31"
   },
   {
-    "var": "iceduration",
-    "name": "Lake Ice Duration (days)",
-    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=32"
+    "var": "extcoef",
+    "name": "Light Extinction Coefficient (m\u207b\u00b9)",
+    "group": "Light & Clarity",
+    "kind": "standard",
+    "packages": [
+      259
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=259"
+  },
+  {
+    "var": "light",
+    "name": "Underwater Light (\u00b5mol/m\u00b2/s)",
+    "group": "Light & Clarity",
+    "kind": "standard",
+    "packages": [
+      29
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=29"
+  },
+  {
+    "var": "deck",
+    "name": "Surface Light (\u00b5mol/m\u00b2/s)",
+    "group": "Light & Clarity",
+    "kind": "standard",
+    "packages": [
+      29
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=29"
+  },
+  {
+    "var": "doc",
+    "name": "Dissolved Organic Carbon (mg/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "dic",
+    "name": "Dissolved Inorganic Carbon (mg/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "toc",
+    "name": "Total Organic Carbon (mg/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "tic",
+    "name": "Total Inorganic Carbon (mg/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "no3no2",
+    "name": "Nitrate + Nitrite as N (\u00b5g/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "no2",
+    "name": "Nitrite as N (\u00b5g/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "nh4",
+    "name": "Ammonium as N (\u00b5g/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "kjdl_n",
+    "name": "Total Kjeldahl Nitrogen (\u00b5g/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "totnuf",
+    "name": "Total Nitrogen (\u00b5g/L) unfiltered",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "totnf",
+    "name": "Total Nitrogen (\u00b5g/L) filtered",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "drp",
+    "name": "Dissolved Reactive Phosphorus (\u00b5g/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "totpuf",
+    "name": "Total Phosphorus (\u00b5g/L) unfiltered",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "totpf",
+    "name": "Total Phosphorus (\u00b5g/L) filtered",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "drsif",
+    "name": "Dissolved Reactive Silica (\u00b5g/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "brsif",
+    "name": "Bicarbonate Reactive Silica (\u00b5g/L) filtered",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "brsiuf",
+    "name": "Bicarbonate Reactive Silica (\u00b5g/L) unfiltered",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "tpm",
+    "name": "Total Particulate Matter (mg/L)",
+    "group": "Nutrients & Carbon",
+    "kind": "standard",
+    "packages": [
+      1
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "ph",
+    "name": "pH",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "phair",
+    "name": "pH (air equilibrated)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "alk",
+    "name": "Alkalinity (\u00b5eq/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      1,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=1"
+  },
+  {
+    "var": "ca",
+    "name": "Calcium (mg/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "mg",
+    "name": "Magnesium (mg/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "na",
+    "name": "Sodium (mg/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "k",
+    "name": "Potassium (mg/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "so4",
+    "name": "Sulfate (mg/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "cl",
+    "name": "Chloride (mg/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2,
+      401
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "fe",
+    "name": "Iron (mg/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "mn",
+    "name": "Manganese (mg/L)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "cond",
+    "name": "Specific Conductance (\u00b5S/cm)",
+    "group": "Ions",
+    "kind": "standard",
+    "packages": [
+      2
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=2"
+  },
+  {
+    "var": "chlor",
+    "name": "Chlorophyll a (\u00b5g/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      35,
+      38
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=35"
+  },
+  {
+    "var": "phaeo",
+    "name": "Phaeophytin (\u00b5g/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      35,
+      38
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=35"
+  },
+  {
+    "var": "phyto_total",
+    "name": "Phytoplankton Biomass, Total (mg/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      88
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=88"
+  },
+  {
+    "var": "phyto_cyano",
+    "name": "Phytoplankton Biomass, Cyanobacteria (mg/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      88
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=88"
+  },
+  {
+    "var": "phyto_diatom",
+    "name": "Phytoplankton Biomass, Diatoms (mg/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      88
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=88"
+  },
+  {
+    "var": "phyto_green",
+    "name": "Phytoplankton Biomass, Green Algae (mg/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      88
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=88"
+  },
+  {
+    "var": "phyto_crypto",
+    "name": "Phytoplankton Biomass, Cryptophytes (mg/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      88
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=88"
+  },
+  {
+    "var": "phyto_chryso",
+    "name": "Phytoplankton Biomass, Golden Algae (mg/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      88
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=88"
+  },
+  {
+    "var": "phyto_dino",
+    "name": "Phytoplankton Biomass, Dinoflagellates (mg/L)",
+    "group": "Algae",
+    "kind": "standard",
+    "packages": [
+      88
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=88"
   },
   {
     "var": "cladocera",
     "name": "Cladocera (#/L)",
+    "group": "Zooplankton",
+    "kind": "standard",
+    "packages": [
+      37,
+      90
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
   },
   {
     "var": "calanoid",
     "name": "Calanoid copepod (#/L)",
+    "group": "Zooplankton",
+    "kind": "standard",
+    "packages": [
+      37,
+      90
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
   },
   {
     "var": "cyclopoid",
     "name": "Cyclopoid copepod (#/L)",
+    "group": "Zooplankton",
+    "kind": "standard",
+    "packages": [
+      37,
+      90
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
   },
   {
     "var": "rotifer",
     "name": "Rotifer (#/L)",
+    "group": "Zooplankton",
+    "kind": "standard",
+    "packages": [
+      37,
+      90
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "cladocera_bm",
+    "name": "Cladocera biomass (\u00b5g/L)",
+    "group": "Zooplankton",
+    "kind": "standard",
+    "packages": [
+      37,
+      90,
+      376
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "calanoid_bm",
+    "name": "Calanoid copepod biomass (\u00b5g/L)",
+    "group": "Zooplankton",
+    "kind": "standard",
+    "packages": [
+      37,
+      90,
+      376
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "cyclopoid_bm",
+    "name": "Cyclopoid copepod biomass (\u00b5g/L)",
+    "group": "Zooplankton",
+    "kind": "standard",
+    "packages": [
+      37,
+      90,
+      376
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "rotifer_bm",
+    "name": "Rotifer biomass (\u00b5g/L)",
+    "group": "Zooplankton",
+    "kind": "standard",
+    "packages": [
+      37,
+      90,
+      376
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=37"
+  },
+  {
+    "var": "pelagicinv",
+    "name": "Pelagic Macroinvertebrates (#/m\u00b2)",
+    "group": "Macroinvertebrates",
+    "kind": "taxon",
+    "packages": [
+      14
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=14",
+    "taxonLabel": "Taxon",
+    "defaultTaxon": "Chaoborus Larvae"
+  },
+  {
+    "var": "benthicinv",
+    "name": "Benthic Macroinvertebrates (# per sampler)",
+    "group": "Macroinvertebrates",
+    "kind": "taxon",
+    "packages": [
+      11
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=11",
+    "taxonLabel": "Taxonomic group",
+    "defaultTaxon": "All taxa"
   },
   {
     "var": "rusty",
     "name": "Crayfish (CPUE)",
+    "group": "Macroinvertebrates",
+    "kind": "catch",
+    "packages": [
+      3
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=3"
+  },
+  {
+    "var": "macrofreq",
+    "name": "Macrophyte Frequency (% of rake samples)",
+    "group": "Macrophytes",
+    "kind": "taxon",
+    "packages": [
+      23,
+      24
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=23",
+    "taxonLabel": "Species"
+  },
+  {
+    "var": "macrowt",
+    "name": "Macrophyte Wet Weight per Rake Sample (g)",
+    "group": "Macrophytes",
+    "kind": "annual",
+    "packages": [
+      24
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=24"
+  },
+  {
+    "var": "trmacro",
+    "name": "Trout Lake Macrophyte Biomass (g dry/m\u00b2)",
+    "group": "Macrophytes",
+    "kind": "taxon",
+    "packages": [
+      25
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=25",
+    "taxonLabel": "Species",
+    "defaultTaxon": "All species"
+  },
+  {
+    "var": "trrichness",
+    "name": "Trout Lake Macrophyte Richness (species/quadrat)",
+    "group": "Macrophytes",
+    "kind": "annual",
+    "packages": [
+      28
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=28"
   },
   {
     "var": "fish",
     "name": "Fish (CPUE)",
+    "group": "Fish",
+    "kind": "catch",
+    "packages": [
+      7
+    ],
     "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=7"
+  },
+  {
+    "var": "fishrichness",
+    "name": "Fish Species Richness",
+    "group": "Fish",
+    "kind": "annual",
+    "packages": [
+      245
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=245"
+  },
+  {
+    "var": "fishlength",
+    "name": "Fish Length (mm; median & IQR)",
+    "group": "Fish",
+    "kind": "taxon",
+    "packages": [
+      6
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=6",
+    "taxonLabel": "Species",
+    "subLabel": "Gear",
+    "defaultTaxon": "BLUEGILL"
+  },
+  {
+    "var": "fishweight",
+    "name": "Fish Weight (g; median & IQR)",
+    "group": "Fish",
+    "kind": "taxon",
+    "packages": [
+      6
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=6",
+    "taxonLabel": "Species",
+    "subLabel": "Gear",
+    "defaultTaxon": "BLUEGILL"
+  },
+  {
+    "var": "fishlenfreq",
+    "name": "Fish Length Frequency (% of fish)",
+    "group": "Fish",
+    "kind": "lengthfreq",
+    "packages": [
+      8
+    ],
+    "url": "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=8",
+    "taxonLabel": "Species",
+    "subLabel": "Year",
+    "defaultTaxon": "BLUEGILL"
   }
 ]

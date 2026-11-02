@@ -13,37 +13,38 @@
 // Constants & Configuration
 // ===========================================================================
 
-/** Lake name groupings by region */
-const NORTH_LAKES = [
-  "Allequash Lake",
-  "Big Musky Lake",
-  "Crystal Lake",
-  "Crystal Bog",
-  "Sparkling Lake",
-  "Trout Lake",
-  "Trout Bog"
-];
-
-const SOUTH_LAKES = [
-  "Lake Mendota",
-  "Lake Monona",
-  "Fish Lake",
-  "Lake Wingra"
-];
-
 /** Abbreviated month names for monthly boxplot x-axis ordering */
 const MONTH_ABBR = [
   "Jan", "Feb", "March", "April", "May", "June",
   "July", "Aug", "Sep", "Oct", "Nov", "Dec"
 ];
 
-/** Variable codes that represent Catch / CPUE abundance datasets */
-const CATCH_VARS = ["rusty", "fish"];
+/**
+ * Variable "kinds" (set per variable in matchtable.json by fetch_data.py):
+ *   standard   - sampled by date and depth; time-series, annual means, monthly boxplots
+ *   annual     - one value per lake-year; time-series only, no depth
+ *   catch      - fish / crayfish CPUE by species and gear
+ *   taxon      - one value per lake-year-taxon (optionally by gear), with optional IQR
+ *   lengthfreq - fish length-frequency distribution for one species and year
+ * Fallbacks below keep an older matchtable.json (without "kind") working.
+ */
+const LEGACY_KINDS = { rusty: "catch", fish: "catch", iceduration: "annual" };
 
-/** Color palette for multi-lake trace lines and bars */
+/** Fallback dropdown groups for an older matchtable.json without "group" */
+const LEGACY_GROUPS = {
+  Physical: ["wtemp", "o2", "o2sat", "iceduration"],
+  Nutrients: ["doc", "dic", "toc", "tic", "no3no2", "nh4", "totnuf", "totnf", "drp", "totpuf", "totpf", "drsif"],
+  Ions: ["ph", "alk", "ca", "mg", "na", "k", "so4", "cl", "cond"],
+  Secchi: ["secview", "secnview"],
+  Zooplankton: ["cladocera", "calanoid", "cyclopoid", "rotifer"],
+  "Catch / Abundance": ["rusty", "fish"],
+};
+
+/** Color palette for multi-lake trace lines and bars (one per lake) */
 const TRACE_COLORS = [
   "#2a7da8", "#e8604c", "#5db87a", "#f0a500", "#8b5cf6",
-  "#06b6d4", "#f97316", "#84cc16", "#ec4899", "#14b8a6", "#a855f7"
+  "#06b6d4", "#f97316", "#84cc16", "#ec4899", "#14b8a6", "#a855f7",
+  "#64748b", "#b45309"
 ];
 
 /** Leaflet map marker styles */
@@ -81,7 +82,8 @@ let elVarSelect, elDepthSelect, elDepthField,
   elShowMapBtn, elCloseMapBtn, elMapModal, elLeafletMap,
   elChart, elChartLoading, elCitationLine, elModalHintPlural,
   elLakeMultiselect, elLakeSelectBtn, elLakePanel, elLakeSelectLabel,
-  elChkAllNorth, elChkAllSouth, elNorthLakeOptions, elSouthLakeOptions;
+  elChkAllNorth, elChkAllSouth, elNorthLakeOptions, elSouthLakeOptions,
+  elSpeciesLabel, elGearLabel, elPlotTypeField;
 
 // ===========================================================================
 // Application Boot & Initialization
@@ -104,6 +106,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   elSpeciesField = document.getElementById("speciesField");
   elGearSelect = document.getElementById("gearSelect");
   elGearField = document.getElementById("gearField");
+  elSpeciesLabel = document.getElementById("speciesLabel");
+  elGearLabel = document.getElementById("gearLabel");
+  elPlotTypeField = document.getElementById("plotTypeField");
   elPlotTypeGroup = document.getElementById("plotTypeGroup");
   elOptAM = document.getElementById("optAM");
   elOptMB = document.getElementById("optMB");
@@ -147,13 +152,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Helper Functions & Dropdown Builders
 // ===========================================================================
 
+/** Returns the matchtable row for a variable code (or undefined). */
+function varRow(varCode) {
+  return state.matchtable.find(r => r.var === varCode);
+}
+
 /**
- * Checks if a given variable code belongs to Catch / CPUE datasets.
+ * Returns the kind of a variable: standard | annual | catch | taxon | lengthfreq.
  * @param {string} varCode - The short variable code (e.g., 'rusty', 'wtemp')
- * @returns {boolean} True if the variable is a catch variable
  */
+function varKind(varCode) {
+  const row = varRow(varCode);
+  return (row && row.kind) || LEGACY_KINDS[varCode] || "standard";
+}
+
+/** True for kinds that use the species/taxon dropdown instead of depth. */
+function usesTaxon(varCode) {
+  return ["catch", "taxon", "lengthfreq"].includes(varKind(varCode));
+}
+
+/** Kept for readability in the catch-specific code paths. */
 function isCatchVar(varCode) {
-  return CATCH_VARS.includes(varCode);
+  return varKind(varCode) === "catch";
+}
+
+/** Lake names in a region ("north" / "south"), from lakelocations.json. */
+function lakesInRegion(region) {
+  return state.lakeLocations.filter(l => l.region === region).map(l => l.lake);
+}
+
+/** Field holding the species/taxon name for the current variable's records. */
+function taxonField() {
+  return isCatchVar(state.currentVar) ? "spname" : "taxon";
 }
 
 /**
@@ -210,13 +240,14 @@ function updateLakeSelectLabel() {
   const selected = getSelectedLakes();
   if (!elLakeSelectLabel) return;
 
+  const north = lakesInRegion("north");
+  const south = lakesInRegion("south");
+
   if (selected.length === 0) {
     elLakeSelectLabel.textContent = "Select lakes\u2026";
-  } else if (selected.length === NORTH_LAKES.length && NORTH_LAKES.every(l => selected.includes(l))
-    && !selected.some(l => SOUTH_LAKES.includes(l))) {
+  } else if (selected.length === north.length && north.every(l => selected.includes(l))) {
     elLakeSelectLabel.textContent = "All Northern Lakes";
-  } else if (selected.length === SOUTH_LAKES.length && SOUTH_LAKES.every(l => selected.includes(l))
-    && !selected.some(l => NORTH_LAKES.includes(l))) {
+  } else if (selected.length === south.length && south.every(l => selected.includes(l))) {
     elLakeSelectLabel.textContent = "All Southern Lakes";
   } else if (selected.length === 1) {
     elLakeSelectLabel.textContent = selected[0];
@@ -230,14 +261,15 @@ function updateLakeSelectLabel() {
  * @param {Array<Object>} matchtable - Reference dataset mapping array
  */
 function populateVarSelect(matchtable) {
-  const groups = {
-    Physical: ["wtemp", "o2", "o2sat", "iceduration"],
-    Nutrients: ["doc", "dic", "toc", "tic", "no3no2", "nh4", "totnuf", "totnf", "drp", "totpuf", "totpf", "drsif"],
-    Ions: ["ph", "alk", "ca", "mg", "na", "k", "so4", "cl", "cond"],
-    Secchi: ["secview", "secnview"],
-    Zooplankton: ["cladocera", "calanoid", "cyclopoid", "rotifer"],
-    "Catch / Abundance": ["rusty", "fish"],
-  };
+  // Groups come from matchtable.json (in file order); older files fall back to LEGACY_GROUPS.
+  let groups = LEGACY_GROUPS;
+  if (matchtable.some(r => r.group)) {
+    groups = {};
+    matchtable.forEach(r => {
+      const g = r.group || "Other";
+      (groups[g] = groups[g] || []).push(r.var);
+    });
+  }
 
   elVarSelect.innerHTML = "";
   Object.entries(groups).forEach(([groupName, vars]) => {
@@ -352,19 +384,25 @@ async function onVarChange() {
 /** Handles user changing the selected lake(s) */
 async function onLakeChange() {
   updateMapMarkers();
-  if (isCatchVar(state.currentVar)) {
+  updateCitation();
+  refreshDependentControls();
+  renderPlot();
+}
+
+/** Handles user changing the selected species / taxon */
+function onSpeciesChange() {
+  updateGearSelect();
+  renderPlot();
+}
+
+/** Rebuilds the depth or species/sub dropdowns for the current variable and lakes. */
+function refreshDependentControls() {
+  if (usesTaxon(state.currentVar)) {
     updateSpeciesSelect();
     updateGearSelect();
   } else {
     updateDepthSelect();
   }
-  renderPlot();
-}
-
-/** Handles user changing the selected species */
-function onSpeciesChange() {
-  updateGearSelect();
-  renderPlot();
 }
 
 /**
@@ -374,8 +412,6 @@ function onSpeciesChange() {
 async function onSelectionChange() {
   const varCode = elVarSelect.value;
   if (!varCode) return;
-
-  updateCitation();
 
   // Re-fetch JSON dataset if a new variable was chosen
   if (varCode !== state.currentVar) {
@@ -390,37 +426,35 @@ async function onSelectionChange() {
     }
   }
 
+  updateCitation();
   updateControlVisibility();
   updateMapMarkers();
-
-  if (isCatchVar(state.currentVar)) {
-    updateSpeciesSelect();
-    updateGearSelect();
-  } else {
-    updateDepthSelect();
-  }
-
+  refreshDependentControls();
   renderPlot();
 }
 
 /**
- * Adjusts the visibility of sidebar inputs based on variable type:
- * - Hides depth field & shows species/gear dropdowns for catch variables.
- * - Restricts plot options to Time-Series only for catch variables.
+ * Adjusts the visibility of sidebar inputs based on variable kind:
+ * - standard: depth dropdown; all plot types
+ * - annual: no depth; time-series only
+ * - catch / taxon: species (+ gear when present); time-series only
+ * - lengthfreq: species + year; no plot-type choice
  */
 function updateControlVisibility() {
-  const catchVar = isCatchVar(state.currentVar);
+  const kind = varKind(state.currentVar);
+  const row = varRow(state.currentVar) || {};
+  const taxonVar = usesTaxon(state.currentVar);
 
-  // Toggle Depth vs Species & Gear controls
-  elDepthField.hidden = catchVar;
-  elSpeciesField.hidden = !catchVar;
-  elGearField.hidden = !catchVar;
+  elDepthField.hidden = kind !== "standard";
+  elSpeciesField.hidden = !taxonVar;
+  elGearField.hidden = !(kind === "catch" || kind === "lengthfreq" ||
+    (kind === "taxon" && state.varData.some(r => r.gear)));
 
-  // Restrict plot types: Catch datasets support Time-Series only
-  // Lake Ice also only makes sense for time series
-  const disableOtherPlots = catchVar || state.currentVar === "iceduration";
+  if (elSpeciesLabel) elSpeciesLabel.textContent = `Select ${(row.taxonLabel || "species").toLowerCase()}`;
+  if (elGearLabel) elGearLabel.textContent = `Select ${(row.subLabel || "gear").toLowerCase()}`;
 
-  if (disableOtherPlots) {
+  // Only standard variables support annual means and monthly boxplots
+  if (kind !== "standard") {
     const tsRadio = elPlotTypeGroup.querySelector('input[value="plot.ts"]');
     if (tsRadio) tsRadio.checked = true;
     elOptAM.hidden = true;
@@ -429,10 +463,11 @@ function updateControlVisibility() {
     elOptAM.hidden = false;
     elOptMB.hidden = false;
   }
+  if (elPlotTypeField) elPlotTypeField.hidden = kind === "lengthfreq";
 }
 
 // ===========================================================================
-// Catch Variable Controls (Species & Gear Cascading Filters)
+// Species / Taxon and Gear / Year Cascading Filters
 // ===========================================================================
 
 /**
@@ -443,89 +478,97 @@ function getSelectedLakes() {
   return [...document.querySelectorAll(".lakeCheckbox:checked")].map(cb => cb.value);
 }
 
-/** Dynamically populates the species dropdown based on current lake selection */
-function updateSpeciesSelect() {
-  if (!state.varData || !isCatchVar(state.currentVar)) return;
-
-  const selectedLakes = getSelectedLakes();
-  const lakeData = state.varData.filter(r => selectedLakes.includes(r.lakename));
-  const speciesList = [...new Set(lakeData.map(r => r.spname))].filter(Boolean).sort();
-
-  const prevSpecies = elSpeciesSelect.value;
-  elSpeciesSelect.innerHTML = "";
-
-  speciesList.forEach(sp => {
+/** Fills a <select> with values, keeping the previous choice when still valid. */
+function fillSelect(el, values, preferred) {
+  const prev = el.value;
+  el.innerHTML = "";
+  values.forEach(v => {
     const opt = document.createElement("option");
-    opt.value = sp;
-    opt.textContent = sp;
-    elSpeciesSelect.appendChild(opt);
+    opt.value = v;
+    opt.textContent = v;
+    el.appendChild(opt);
   });
-
-  // Preserve previous selection if valid, default to WALLEYE or first entry
-  if (speciesList.includes(prevSpecies)) {
-    elSpeciesSelect.value = prevSpecies;
-  } else if (speciesList.includes("WALLEYE")) {
-    elSpeciesSelect.value = "WALLEYE";
-  } else if (speciesList.length > 0) {
-    elSpeciesSelect.value = speciesList[0];
+  const strValues = values.map(String);
+  if (strValues.includes(prev)) {
+    el.value = prev;
+    return;
   }
+  const pick = (preferred || []).find(p => p != null && strValues.includes(String(p)));
+  if (pick != null) el.value = String(pick);
+  else if (values.length) el.value = String(values[0]);
 }
 
-/** Dynamically populates gear dropdown based on selected lake(s) AND selected species */
-function updateGearSelect() {
-  if (!state.varData || !isCatchVar(state.currentVar)) return;
+/** Dynamically populates the species / taxon dropdown based on current lake selection */
+function updateSpeciesSelect() {
+  if (!state.varData || !usesTaxon(state.currentVar)) return;
 
+  const field = taxonField();
+  const selectedLakes = getSelectedLakes();
+  const counts = {};
+  state.varData.forEach(r => {
+    if (selectedLakes.includes(r.lakename) && r[field]) counts[r[field]] = (counts[r[field]] || 0) + 1;
+  });
+  const list = Object.keys(counts).sort((a, b) => a.localeCompare(b));
+  // "All ..." aggregate entries go first
+  list.sort((a, b) => (b.startsWith("All ") - a.startsWith("All ")));
+
+  const row = varRow(state.currentVar) || {};
+  const mostCommon = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([k]) => k)[0];
+  fillSelect(elSpeciesSelect, list, [row.defaultTaxon, isCatchVar(state.currentVar) ? "WALLEYE" : null, mostCommon]);
+}
+
+/**
+ * Populates the second dropdown:
+ * - catch: gear types used in more than one year for the selected lakes & species
+ * - taxon: gear types (when the dataset has them), most records first
+ * - lengthfreq: years with data for the selected lakes & species, newest first
+ */
+function updateGearSelect() {
+  if (!state.varData || !usesTaxon(state.currentVar)) return;
+
+  const kind = varKind(state.currentVar);
+  const field = taxonField();
   const selectedLakes = getSelectedLakes();
   const selectedSpecies = elSpeciesSelect.value;
+  const rows = state.varData.filter(r => selectedLakes.includes(r.lakename) && r[field] === selectedSpecies);
 
-  // Filter records by lake(s) AND species to isolate available gear types
-  const filteredData = state.varData.filter(
-    r => selectedLakes.includes(r.lakename) && r.spname === selectedSpecies
-  );
-  // Count unique years each gear type was used
-  const gearYearsMap = {};
-  filteredData.forEach(r => {
-    if (!r.gearid) return;
-    if (!gearYearsMap[r.gearid]) {
-      gearYearsMap[r.gearid] = new Set();
-    }
-    gearYearsMap[r.gearid].add(r.year4);
-  });
-
-  // Exclude gears that only appear in a single year
-  const gearList = Object.keys(gearYearsMap)
-    .filter(gear => gearYearsMap[gear].size > 1)
-    .sort();
-
-  const prevGear = elGearSelect.value;
-  elGearSelect.innerHTML = "";
-
-  gearList.forEach(g => {
-    const opt = document.createElement("option");
-    opt.value = g;
-    opt.textContent = g;
-    elGearSelect.appendChild(opt);
-  });
-
-  // Preserve previous choice or pick common defaults
-  if (gearList.includes(prevGear)) {
-    elGearSelect.value = prevGear;
-  } else if (gearList.includes("Electrofishing")) {
-    elGearSelect.value = "Electrofishing";
-  } else if (gearList.includes("Crayfish Trap")) {
-    elGearSelect.value = "Crayfish Trap";
-  } else if (gearList.length > 0) {
-    elGearSelect.value = gearList[0];
+  if (kind === "lengthfreq") {
+    const years = [...new Set(rows.map(r => r.year4))].sort((a, b) => b - a);
+    fillSelect(elGearSelect, years, [years[0]]);
+    return;
   }
+
+  if (kind === "taxon") {
+    const counts = {};
+    rows.forEach(r => { if (r.gear) counts[r.gear] = (counts[r.gear] || 0) + 1; });
+    const gears = Object.keys(counts).sort();
+    const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([k]) => k)[0];
+    fillSelect(elGearSelect, gears, [top]);
+    return;
+  }
+
+  // catch: count unique years each gear type was used; drop single-year gears
+  const gearYearsMap = {};
+  rows.forEach(r => {
+    if (!r.gearid) return;
+    (gearYearsMap[r.gearid] = gearYearsMap[r.gearid] || new Set()).add(r.year4);
+  });
+  const gearList = Object.keys(gearYearsMap).filter(g => gearYearsMap[g].size > 1).sort();
+  fillSelect(elGearSelect, gearList, ["Electrofishing", "Crayfish Trap"]);
 }
 
 // ===========================================================================
-// Depth Control (Standard Physical / Chemical / Biological Variables)
+// Depth Control (Standard Variables)
 // ===========================================================================
+
+/** Display text for a depth value: numbers as-is, ranges as integrated samples. */
+function depthLabel(d) {
+  return /^-?\d+(\.\d+)?$/.test(d) ? d : `${d.replace("-", "–")} (integrated)`;
+}
 
 /** Dynamically populates depth choices based on common sampling depths across selected lakes */
 function updateDepthSelect() {
-  if (!state.varData) return;
+  if (!state.varData || varKind(state.currentVar) !== "standard") return;
   const lakes = getSelectedLakes();
 
   const depthSets = lakes.map(lake => {
@@ -535,27 +578,41 @@ function updateDepthSelect() {
       .forEach(r => { counts[r.depth] = (counts[r.depth] || 0) + 1; });
     return new Set(Object.entries(counts).filter(([, n]) => n > 10).map(([d]) => d));
   });
+  // Lakes without any data for this variable shouldn't empty the depth list
+  const nonEmpty = depthSets.filter(s => s.size > 0);
 
-  // Find intersection of depths available in all currently selected lakes
-  const intersection = depthSets.reduce((acc, set) => {
+  // Find intersection of depths available in all selected lakes that have data
+  let intersection = nonEmpty.reduce((acc, set) => {
     if (acc === null) return set;
     return new Set([...acc].filter(d => set.has(d)));
   }, null) || new Set();
+  // No depth shared by every lake (e.g. Mendota phytoplankton is 0-8 m integrated,
+  // Monona 0-2 m): offer all depths; lakes without the chosen depth are left out.
+  if (intersection.size === 0 && nonEmpty.length) {
+    intersection = new Set(nonEmpty.flatMap(set => [...set]));
+  }
 
-  const sortedDepths = [...intersection].map(Number).sort((a, b) => a - b);
+  // Numeric depths first (ascending), then integrated-sample labels like "0-2"
+  const isNum = d => /^-?\d+(\.\d+)?$/.test(d);
+  const sortedDepths = [...intersection].sort((a, b) => {
+    if (isNum(a) && isNum(b)) return Number(a) - Number(b);
+    if (isNum(a) !== isNum(b)) return isNum(a) ? -1 : 1;
+    return a.localeCompare(b, undefined, { numeric: true });
+  });
 
   const prevDepth = elDepthSelect.value;
   elDepthSelect.innerHTML = "";
   sortedDepths.forEach(d => {
     const opt = document.createElement("option");
     opt.value = d;
-    opt.textContent = d;
-    if (String(d) === prevDepth) opt.selected = true;
+    opt.textContent = depthLabel(d);
+    if (d === prevDepth) opt.selected = true;
     elDepthSelect.appendChild(opt);
   });
 
-  if (!elDepthSelect.value && intersection.has("0")) {
-    elDepthSelect.value = "0";
+  if (!sortedDepths.includes(prevDepth)) {
+    if (intersection.has("0")) elDepthSelect.value = "0";
+    else if (intersection.has("0-2")) elDepthSelect.value = "0-2";
   }
 }
 
@@ -569,23 +626,140 @@ function getPlotType() {
   return checked ? checked.value : "plot.ts";
 }
 
-/** Main entry point for chart rendering; routes to catch or standard plotters */
+/** Main entry point for chart rendering; routes to the plotter for the variable's kind */
 function renderPlot() {
   if (!state.varData) return;
 
-  const catchVar = isCatchVar(state.currentVar);
+  const kind = varKind(state.currentVar);
   const lakes = getSelectedLakes();
   const logY = elLogYAxis.checked;
-  const rowMatch = state.matchtable.find(r => r.var === state.currentVar);
+  const rowMatch = varRow(state.currentVar);
   const varName = rowMatch ? rowMatch.name : state.currentVar;
 
   showLoading(false);
 
-  if (catchVar) {
+  if (kind === "catch") {
     renderCatchPlot(lakes, varName, logY);
+  } else if (kind === "taxon") {
+    renderTaxonPlot(lakes, varName, logY);
+  } else if (kind === "lengthfreq") {
+    renderLengthFreqPlot(lakes, varName, logY);
+  } else if (kind === "annual") {
+    renderAnnualPlot(lakes, varName, logY);
   } else {
     renderStandardPlot(lakes, varName, logY);
   }
+}
+
+/** Integer year ticks on a linear x-axis (avoids "1984, 1984.5" ticks on short series). */
+function setYearAxis(layout, traces) {
+  const years = traces.flatMap(t => t.x || []);
+  layout.xaxis.tickformat = "d";
+  layout.xaxis.title = { text: "Year", font: { size: 12 } };
+  if (years.length && Math.max(...years) - Math.min(...years) < 8) layout.xaxis.dtick = 1;
+}
+
+/**
+ * Renders one-value-per-year variables (ice duration/dates, richness, ...).
+ */
+function renderAnnualPlot(lakes, varName, logY) {
+  const traces = [];
+  lakes.forEach((lake, i) => {
+    const rows = state.varData.filter(r => r.lakename === lake).sort((a, b) => a.year4 - b.year4);
+    if (!rows.length) return;
+    const color = TRACE_COLORS[i % TRACE_COLORS.length];
+    traces.push({
+      type: "scatter",
+      mode: "lines+markers",
+      name: lake,
+      x: rows.map(r => r.year4),
+      y: rows.map(r => r.value),
+      line: { color, width: 1.5 },
+      marker: { color, size: 5 },
+    });
+  });
+  const layout = buildLayout(varName, logY, "linear");
+  setYearAxis(layout, traces);
+  drawPlotly(traces, layout);
+}
+
+/**
+ * Renders yearly values for one taxon (and gear, when the dataset has gear).
+ * Records with lo/hi (e.g. fish length IQR) are drawn with asymmetric error bars.
+ */
+function renderTaxonPlot(lakes, varName, logY) {
+  const taxon = elSpeciesSelect.value;
+  const gear = elGearField.hidden ? null : elGearSelect.value;
+  const traces = [];
+
+  lakes.forEach((lake, i) => {
+    const rows = state.varData
+      .filter(r => r.lakename === lake && r.taxon === taxon && (!gear || r.gear === gear))
+      .sort((a, b) => a.year4 - b.year4);
+    if (!rows.length) return;
+    const color = TRACE_COLORS[i % TRACE_COLORS.length];
+    const trace = {
+      type: "scatter",
+      mode: "lines+markers",
+      name: lake,
+      x: rows.map(r => r.year4),
+      y: rows.map(r => r.value),
+      line: { color, width: 1.5 },
+      marker: { color, size: 5 },
+    };
+    if (rows.some(r => r.lo != null && r.hi != null)) {
+      trace.error_y = {
+        type: "data",
+        symmetric: false,
+        array: rows.map(r => (r.hi != null ? r.hi - r.value : 0)),
+        arrayminus: rows.map(r => (r.lo != null ? r.value - r.lo : 0)),
+        color,
+        thickness: 1,
+        width: 2,
+      };
+    }
+    if (rows.some(r => r.n != null)) {
+      trace.text = rows.map(r => (r.n != null ? `n = ${r.n}` : ""));
+      trace.hovertemplate = "%{x}: %{y}<br>%{text}<extra>" + lake + "</extra>";
+    }
+    traces.push(trace);
+  });
+
+  const layout = buildLayout(varName, logY, "linear");
+  setYearAxis(layout, traces);
+  drawPlotly(traces, layout);
+}
+
+/**
+ * Renders the length-frequency distribution (% of fish per 5 mm bin) for one
+ * species and year, one line per lake.
+ */
+function renderLengthFreqPlot(lakes, varName, logY) {
+  const taxon = elSpeciesSelect.value;
+  const year = Number(elGearSelect.value);
+  const traces = [];
+
+  lakes.forEach((lake, i) => {
+    const rows = state.varData
+      .filter(r => r.lakename === lake && r.taxon === taxon && r.year4 === year)
+      .sort((a, b) => a.bin - b.bin);
+    if (!rows.length) return;
+    const total = rows.reduce((s, r) => s + r.n, 0);
+    const color = TRACE_COLORS[i % TRACE_COLORS.length];
+    traces.push({
+      type: "scatter",
+      mode: "lines",
+      name: `${lake} (n = ${Math.round(total)})`,
+      x: rows.map(r => r.bin),
+      y: rows.map(r => (100 * r.n) / total),
+      line: { color, width: 1.8, shape: "hvh" },
+      hovertemplate: "%{x} mm: %{y:.1f}%<extra>" + lake + "</extra>",
+    });
+  });
+
+  const layout = buildLayout("% of fish measured", logY, "linear");
+  layout.xaxis.title = { text: "Length (mm, 5 mm bins)", font: { size: 12 } };
+  drawPlotly(traces, layout);
 }
 
 /**
@@ -668,8 +842,8 @@ function renderCatchPlot(lakes, varName, logY) {
  * @param {boolean} logY - Whether y-axis should be log-scaled
  */
 function renderStandardPlot(lakes, varName, logY) {
-  const depthRaw = elDepthSelect.value;
-  const depth = depthRaw !== "" ? parseFloat(depthRaw) : 0;
+  // Depths are compared as strings so integrated-sample labels ("0-2") work too
+  const depth = elDepthSelect.value !== "" ? elDepthSelect.value : "0";
   const plotType = getPlotType();
   const traces = [];
 
@@ -677,7 +851,7 @@ function renderStandardPlot(lakes, varName, logY) {
     // Monthly Boxplots
     lakes.forEach((lake, i) => {
       const rows = state.varData.filter(
-        r => r.lakename === lake && r.depth === depth && r.rep == 1
+        r => r.lakename === lake && String(r.depth) === depth && r.rep == 1
       );
       if (!rows.length) return;
 
@@ -716,7 +890,7 @@ function renderStandardPlot(lakes, varName, logY) {
     // Annual Means
     lakes.forEach((lake, i) => {
       const rows = state.varData.filter(
-        r => r.lakename === lake && r.depth === depth && r.rep == 1 && r.year4 > 1981
+        r => r.lakename === lake && String(r.depth) === depth && r.rep == 1 && r.year4 > 1981
       );
       if (!rows.length) return;
 
@@ -750,7 +924,7 @@ function renderStandardPlot(lakes, varName, logY) {
     // Time-Series (Default)
     lakes.forEach((lake, i) => {
       const rows = state.varData
-        .filter(r => r.lakename === lake && r.depth === depth && r.rep == 1)
+        .filter(r => r.lakename === lake && String(r.depth) === depth && r.rep == 1)
         .sort((a, b) => a.sampledate.localeCompare(b.sampledate));
       if (!rows.length) return;
 
@@ -822,12 +996,21 @@ function drawPlotly(traces, layout) {
 
   if (!traces.length) {
     Plotly.purge(elChart);
-    elChart.innerHTML = `<div class="chart-loading" style="height:100%">
-      <span style="color:#4a6375;font-size:.9rem">No data available for this selection.</span>
+    state.plotlyInitialized = false;
+    // Tell the user which lakes do have this variable (e.g. Madison-only or Trout Lake-only data)
+    const withData = [...new Set((state.varData || []).map(r => r.lakename))];
+    const order = state.lakeLocations.map(l => l.lake);
+    withData.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    const hint = withData.length && withData.length < order.length
+      ? `<br><span style="font-size:.85rem">This variable is available for: ${withData.join(", ")}.</span>`
+      : "";
+    elChart.innerHTML = `<div class="chart-loading" style="height:100%;text-align:center;padding:0 1rem">
+      <span style="color:#4a6375;font-size:.9rem">No data available for this selection.${hint}</span>
     </div>`;
     return;
   }
 
+  if (!state.plotlyInitialized) elChart.innerHTML = "";
   if (state.plotlyInitialized) {
     Plotly.react(elChart, traces, layout, config);
   } else {
@@ -855,9 +1038,19 @@ function initMap(lakeLocations) {
   lakeLocations.forEach(loc => {
     const marker = L.circleMarker([loc.lat, loc.long], circleStyle(false))
       .addTo(state.map)
-      .bindTooltip(`<strong>${loc.lake}</strong>`);
+      .bindTooltip(lakeTooltip(loc));
     state.markers[loc.lake] = marker;
   });
+}
+
+/** Map tooltip: lake name plus basic lake facts from lakelocations.json (package 434). */
+function lakeTooltip(loc) {
+  const facts = [];
+  if (loc.area_ha != null) facts.push(`Area: ${loc.area_ha} ha`);
+  if (loc.max_depth_m != null) facts.push(`Max depth: ${loc.max_depth_m} m`);
+  if (loc.trophic_state) facts.push(`Trophic state: ${loc.trophic_state}`);
+  if (loc.mixing_type) facts.push(`Mixing: ${loc.mixing_type}`);
+  return `<strong>${loc.lake}</strong>` + (facts.length ? `<br>${facts.join("<br>")}` : "");
 }
 
 /**
@@ -917,17 +1110,23 @@ function closeMap() {
 /** Updates dataset EDI citation link in the footer */
 function updateCitation() {
   const varCode = elVarSelect.value;
-  const row = state.matchtable.find(r => r.var === varCode);
+  const row = varRow(varCode);
   if (!row || !elCitationLine) return;
-  let cite_url = row.url;
 
-  // Handle special case for Southern Lakes Ice Duration dataset
-  if (elVarSelect.value == "iceduration" && getSelectedLakes().some(l => SOUTH_LAKES.includes(l)))
-    cite_url = "https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=33";
+  // Newer matchtable rows list every source package; older ones only have a single url.
+  let links;
+  if (Array.isArray(row.packages) && row.packages.length) {
+    links = row.packages.map(p => {
+      const url = `https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=${p}`;
+      return `<a href="${url}" target="_blank" rel="noopener">knb-lter-ntl.${p}</a>`;
+    }).join(", ");
+  } else {
+    links = `<a href="${row.url}" target="_blank" rel="noopener">EDI Dataset Page</a>`;
+  }
 
   elCitationLine.innerHTML =
-    `A friendly reminder to please cite data! Data citation for this dataset can be found here: ` +
-    `<a href="${cite_url}" target="_blank" rel="noopener">EDI Dataset Page</a>`;
+    `A friendly reminder to please cite data! Data citation${row.packages && row.packages.length > 1 ? "s" : ""} ` +
+    `for this variable can be found on EDI: ${links}`;
 }
 
 /** Toggles loading overlay visibility */

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NTL-LTER Data Viewer</title>
   <meta name="description"
-    content="Interactive viewer for North Temperate Lakes Long-Term Ecological Research (NTL-LTER) data. Explore temperature, nutrients, ions, Secchi depth, ice duration, zooplankton, and fish/crayfish CPUE across 11 Wisconsin lakes from 1981 to present.">
+    content="Interactive viewer for North Temperate Lakes Long-Term Ecological Research (NTL-LTER) data. Explore physical, chemical, and biological data &#8212; temperature, nutrients, ions, light, ice, algae, zooplankton, macroinvertebrates, macrophytes, and fish &#8212; across 13 Wisconsin lakes from 1981 to present.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -79,12 +79,12 @@
 
       <!-- Species & Gear Inputs (Catch / CPUE Variables) -->
       <div class="field" id="speciesField" hidden>
-        <label for="speciesSelect">Select species</label>
+        <label for="speciesSelect" id="speciesLabel">Select species</label>
         <select id="speciesSelect"></select>
       </div>
 
       <div class="field" id="gearField" hidden>
-        <label for="gearSelect">Select gear</label>
+        <label for="gearSelect" id="gearLabel">Select gear</label>
         <select id="gearSelect"></select>
       </div>
 

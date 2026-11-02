@@ -3,77 +3,165 @@
     "lakeid": "AL",
     "lake": "Allequash Lake",
     "region": "north",
-    "lat": 46.038317,
-    "long": -89.620617
+    "lat": 46.038,
+    "long": -89.621,
+    "max_depth_m": 8.0,
+    "avg_depth_m": 2.9,
+    "area_ha": 164.2,
+    "trophic_state": "mesotrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "drainage"
   },
   {
     "lakeid": "BM",
     "lake": "Big Musky Lake",
     "region": "north",
     "lat": 46.021067,
-    "long": -89.611783
+    "long": -89.611783,
+    "max_depth_m": 21.3,
+    "avg_depth_m": 7.5,
+    "area_ha": 375.7,
+    "trophic_state": "oligotrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "seepage"
   },
   {
     "lakeid": "CB",
     "lake": "Crystal Bog",
     "region": "north",
     "lat": 46.007583,
-    "long": -89.606183
+    "long": -89.606183,
+    "max_depth_m": 2.5,
+    "avg_depth_m": 1.7,
+    "area_ha": 0.6,
+    "trophic_state": "dystrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "seepage"
   },
   {
     "lakeid": "CR",
     "lake": "Crystal Lake",
     "region": "north",
     "lat": 46.00275,
-    "long": -89.612233
+    "long": -89.612233,
+    "max_depth_m": 20.4,
+    "avg_depth_m": 11.4,
+    "area_ha": 37.5,
+    "trophic_state": "oligotrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "seepage"
   },
   {
     "lakeid": "SP",
     "lake": "Sparkling Lake",
     "region": "north",
     "lat": 46.007733,
-    "long": -89.701183
+    "long": -89.701183,
+    "max_depth_m": 20.0,
+    "avg_depth_m": 10.9,
+    "area_ha": 63.7,
+    "trophic_state": "oligotrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "seepage"
   },
   {
     "lakeid": "TB",
     "lake": "Trout Bog",
     "region": "north",
     "lat": 46.04125,
-    "long": -89.686283
+    "long": -89.686283,
+    "max_depth_m": 7.9,
+    "avg_depth_m": 5.6,
+    "area_ha": 1.0,
+    "trophic_state": "dystrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "seepage"
   },
   {
     "lakeid": "TR",
     "lake": "Trout Lake",
     "region": "north",
     "lat": 46.029267,
-    "long": -89.665017
+    "long": -89.665017,
+    "max_depth_m": 35.7,
+    "avg_depth_m": 14.6,
+    "area_ha": 1583.0,
+    "trophic_state": "oligotrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "drainage"
   },
   {
     "lakeid": "ME",
     "lake": "Lake Mendota",
     "region": "south",
     "lat": 43.09885,
-    "long": -89.40545
+    "long": -89.40545,
+    "max_depth_m": 25.3,
+    "avg_depth_m": 12.8,
+    "area_ha": 3961.2,
+    "trophic_state": "eutrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "drainage"
   },
   {
     "lakeid": "MO",
     "lake": "Lake Monona",
     "region": "south",
     "lat": 43.06337,
-    "long": -89.36086
+    "long": -89.36086,
+    "max_depth_m": 22.5,
+    "avg_depth_m": 8.2,
+    "area_ha": 1372.5,
+    "trophic_state": "eutrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "drainage"
   },
   {
     "lakeid": "WI",
     "lake": "Lake Wingra",
     "region": "south",
     "lat": 43.05258,
-    "long": -89.42499
+    "long": -89.42499,
+    "max_depth_m": 4.0,
+    "avg_depth_m": 2.7,
+    "area_ha": 138.5,
+    "trophic_state": "eutrophic",
+    "mixing_type": "polymictic",
+    "drainage_type": "drainage"
   },
   {
     "lakeid": "FI",
     "lake": "Fish Lake",
     "region": "south",
     "lat": 43.28733,
-    "long": -89.65173
+    "long": -89.65173,
+    "max_depth_m": 18.9,
+    "avg_depth_m": 6.6,
+    "area_ha": 80.4,
+    "trophic_state": "mesotrophic",
+    "mixing_type": "dimictic",
+    "drainage_type": "seepage"
+  },
+  {
+    "lakeid": "KE",
+    "lake": "Lake Kegonsa",
+    "region": "south",
+    "lat": 42.959722,
+    "long": -89.245556,
+    "area_ha": 1298.6,
+    "max_depth_m": 9.4,
+    "trophic_state": "eutrophic",
+    "mixing_type": "dimictic"
+  },
+  {
+    "lakeid": "WA",
+    "lake": "Lake Waubesa",
+    "region": "south",
+    "lat": 43.008889,
+    "long": -89.317778,
+    "area_ha": 839.3,
+    "max_depth_m": 11.6,
+    "trophic_state": "eutrophic",
+    "mixing_type": "dimictic"
   }
 ]

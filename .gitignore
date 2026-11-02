@@ -1,0 +1,10 @@
+# Local EDI metadata dumps from tools/dump_edi_metadata.py
+edi_metadata/
+tools/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
