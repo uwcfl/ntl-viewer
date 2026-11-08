@@ -2018,4 +2018,3 @@ package,variable,lakeid,sampledate,year4,depth,taxon,value,action,reason
 6,weight,TB,2019-07-30,2019,-1.0,NOFISH,0.0,remove,fish weight <= 0 g (treated as missing)
 6,weight,TB,2019-07-30,2019,-1.0,NOFISH,0.0,remove,fish weight <= 0 g (treated as missing)
 6,weight,TR,2019-08-05,2019,7.0,LAKEWHITEFISH,0.0,remove,fish weight <= 0 g (treated as missing)
-6,depth,TR,2025-07-27,2025,2200.0,LAKETROUT,2200.0,review,fish sample depth > 40 m (not used by viewer)
